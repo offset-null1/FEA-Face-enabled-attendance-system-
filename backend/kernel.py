@@ -69,4 +69,4 @@ class kernel:
 if __name__ == '__main__':
     print('Raw kernel')
 else:
-    pass
+    print("Running imported code from kernel.py")
