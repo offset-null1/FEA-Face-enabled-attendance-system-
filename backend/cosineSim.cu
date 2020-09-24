@@ -101,7 +101,7 @@ int main(void)
     
     result = dot/(mag_a*mag_b);
     std::cout<<"Result: "<<result<<std::endl;
-    // cudaFree(d_a); cudaFree(d_b); cudaFree(d_o);
+    cudaFree(d_a); cudaFree(d_b); cudaFree(d_o);
     
     return 0;
 }
