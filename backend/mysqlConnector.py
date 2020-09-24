@@ -640,7 +640,5 @@ class mysqlConnector:
 
 if __name__ == '__main__' :
     print("Raw query class")
-
 else:
-    pass  
-
+    print("Running imported code form msyqlConnector")
