@@ -92,9 +92,8 @@ class detector(camera):
             (startX, startY, endX, endY) = box.astype('int')
             text = '{:.2f}%'.format(this_confidence*100)
             y = startY - 10 if startY-10>10 else startY+10
-            cv2.rectangle(frame, (startX,startY),(endX,endY), (201,107,230),2) 
-            cv2.putText(frame, text, (startX,y),cv2.FONT_HERSHEY_SIMPLEX, 0.45,(170,100,220), 2) 
-            # roi = orig[startY:endY,startX:endX]
+            cv2.rectangle(frame, (startX,startY),(endX,endY), (230,201,107),2) 
+            cv2.putText(frame, text, (startX,y),cv2.FONT_HERSHEY_SIMPLEX, 0.45,(230,201,107), 2) 
             ret1, jpeg = cv2.imencode('.jpg', frame)
             return jpeg.tobytes()
         ret2, jpeg_orig = cv2.imencode('.jpg', orig)
