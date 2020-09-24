@@ -1,4 +1,5 @@
 import numpy as np
+import time
 import cv2
 import imutils
 import logging
@@ -32,6 +33,7 @@ class camera:
     def __init__(self,source=None):
         try:
             self.cap = cv2.VideoCapture(source)
+            print('OPENED')
             logging.debug(f'Camera obj:{self.cap}')
         except:
             logging.critical('Video capture failed, please check the given video source is valid')
@@ -85,20 +87,22 @@ class detector(camera):
         for i in range(0, detections.shape[2]):
             this_confidence = detections[0,0,i,2] 
             if this_confidence < confidence:
-                continue
+                break
             box = detections[0,0,i,3:7]* np.array([w,h,w,h])
             (startX, startY, endX, endY) = box.astype('int')
             text = '{:.2f}%'.format(this_confidence*100)
             y = startY - 10 if startY-10>10 else startY+10
-            cv2.rectangle(frame, (startX,startY),(endX,endY), (170,100,220),2) 
+            cv2.rectangle(frame, (startX,startY),(endX,endY), (201,107,230),2) 
             cv2.putText(frame, text, (startX,y),cv2.FONT_HERSHEY_SIMPLEX, 0.45,(170,100,220), 2) 
-            roi = orig[startY:endY,startX:endX]
-            
-        return orig,frame              
+            # roi = orig[startY:endY,startX:endX]
+            ret1, jpeg = cv2.imencode('.jpg', frame)
+            return jpeg.tobytes()
+        ret2, jpeg_orig = cv2.imencode('.jpg', orig)
+        return jpeg_orig .tobytes()            
                 
 
                 
 if __name__ == '__main__':
     print('Raw detector module')
 else:
-    pass
+    print("Running imported code of detect_faces")
