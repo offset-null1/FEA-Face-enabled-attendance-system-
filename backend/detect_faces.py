@@ -85,20 +85,21 @@ class detector(camera):
         for i in range(0, detections.shape[2]):
             this_confidence = detections[0,0,i,2] 
             if this_confidence < confidence:
-                continue
+                break
             box = detections[0,0,i,3:7]* np.array([w,h,w,h])
             (startX, startY, endX, endY) = box.astype('int')
             text = '{:.2f}%'.format(this_confidence*100)
             y = startY - 10 if startY-10>10 else startY+10
-            cv2.rectangle(frame, (startX,startY),(endX,endY), (170,100,220),2) 
-            cv2.putText(frame, text, (startX,y),cv2.FONT_HERSHEY_SIMPLEX, 0.45,(170,100,220), 2) 
-            roi = orig[startY:endY,startX:endX]
-            
-        return orig,frame              
+            cv2.rectangle(frame, (startX,startY),(endX,endY), (230,201,107),2) 
+            cv2.putText(frame, text, (startX,y),cv2.FONT_HERSHEY_SIMPLEX, 0.45,(230,201,107), 2) 
+            ret1, jpeg = cv2.imencode('.jpg', frame)
+            return jpeg.tobytes()
+        ret2, jpeg_orig = cv2.imencode('.jpg', orig)
+        return jpeg_orig .tobytes()            
                 
 
                 
 if __name__ == '__main__':
     print('Raw detector module')
 else:
-    pass
+    print("Running imported code of detect_faces")
