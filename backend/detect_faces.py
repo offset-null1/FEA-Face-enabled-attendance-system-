@@ -65,7 +65,6 @@ class detector(camera):
             weights_path = os.path.join(os.environ['HOME'],'opencv/samples/dnn/face_detector/res10_300x300_ssd_iter_140000_fp16.caffemodel')
         
         if os.path.isabs(proto_path) and os.path.isabs(weights_path):
-            logging.info(' Loading model..')
             net = cv2.dnn.readNetFromCaffe(proto_path, weights_path)
             return net
         else:
@@ -75,7 +74,7 @@ class detector(camera):
     def detect(self,confidence=0.5):
         net = self.load_model()
         frame = self.getRawFrames()
-        frame = imutils.resize(frame,width=400)
+        frame = imutils.resize(frame,width=300)
         orig = frame.copy()
         (h,w) = frame.shape[:2]
         blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300,300)), 1.0, (300,300), (104.0,177.0,123.0))
@@ -84,22 +83,24 @@ class detector(camera):
         detections = net.forward()
         for i in range(0, detections.shape[2]):
             this_confidence = detections[0,0,i,2] 
-            if this_confidence < confidence:
+            if this_confidence < confidence:      
                 break
+            
             box = detections[0,0,i,3:7]* np.array([w,h,w,h])
             (startX, startY, endX, endY) = box.astype('int')
             text = '{:.2f}%'.format(this_confidence*100)
             y = startY - 10 if startY-10>10 else startY+10
-            cv2.rectangle(frame, (startX,startY),(endX,endY), (230,201,107),2) 
-            cv2.putText(frame, text, (startX,y),cv2.FONT_HERSHEY_SIMPLEX, 0.45,(230,201,107), 2) 
-            ret1, jpeg = cv2.imencode('.jpg', frame)
-            return jpeg.tobytes()
-        ret2, jpeg_orig = cv2.imencode('.jpg', orig)
-        return jpeg_orig .tobytes()            
-                
+            cv2.rectangle(frame, (startX,startY),(endX,endY), (10,0,10),1) 
+            cv2.putText(frame, text, (startX,y),cv2.FONT_HERSHEY_SIMPLEX, 0.45,(240,126,190), 2) 
+            roi = orig[startY-20:endY+10,startX-20:endX+20]
+            ret1, jpeg_frame = cv2.imencode('.png', frame)
+            return jpeg_frame.tobytes(),roi
+        ret2, jpeg_orig = cv2.imencode('.png', orig)
+        return jpeg_orig.tobytes(),None
+                   
 
                 
 if __name__ == '__main__':
     print('Raw detector module')
 else:
-    print("Running imported code of detect_faces")
+    pass
