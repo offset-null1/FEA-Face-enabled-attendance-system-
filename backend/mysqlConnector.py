@@ -124,9 +124,9 @@ class mysqlConnector:
             
      
     @staticmethod       
-    def getConstraints(column=None):
+    def getConstraint(column=None):
         ''' 
-            Utility function to add the passed key constraints in the query.
+            Utility function to add the passed key constraint in the query.
             USAGE: Accepts dictionary of the form : {field1 : {dataType:' ',constraint: ' '/[]}, field2: {... , ...}, ...}
             constraint key could be a str (if one constraint) or list of sting type (for more than one constraint)
             RETURN TYPE: dict
@@ -141,7 +141,7 @@ class mysqlConnector:
                         try:
                             constraint = j['constraint']
                         except KeyError as err:
-                            logging.info(f' No Contraint for the field :{key} ')
+                            logging.info(f' No Contra for the field :{key} ')
                             logging.info(' Continuing to next field..')
                             key_constraint_pair[key]='empty'
                             break
@@ -161,7 +161,7 @@ class mysqlConnector:
                                 key_constraint_pair[key]=constraint
                         
                             except AssertionError as err:
-                                logging.critical(f'The contraint list for "{key}" should contain string values, but given :{constraint}')
+                                logging.critical(f'The contraint list for "{key}" should containt string values, but given :{constraint}')
                                 logging.critical('Returning none')
                                 return
                             
@@ -223,7 +223,7 @@ class mysqlConnector:
                     elif err.errno == errorcode.ER_BAD_DB_ERROR:
                         logging.debug("Database doesn't exist")
                     else:
-                        print(err)
+                        logging.critical(err)
                         
                         
                         
@@ -330,7 +330,7 @@ class mysqlConnector:
                     logging.critical('Retruning none')
                     return
                  
-                keyConstraint = mysqlConnector.getConstraints(kwargs['columns'])
+                keyConstraint = mysqlConnector.getConstraint(kwargs['columns'])
                 
                 for i in range(len(keys)):
                     query += mysqlConnector.addTicks(keys[i]) + ' ' + keyDataType[i] 
@@ -370,7 +370,7 @@ class mysqlConnector:
 
 
     def desc(self, tableName):
-        logging.info(' Into describe.')
+        logging.info(' o describe.')
         if(tableName):
             query = 'DESC '+mysqlConnector.addTicks(tableName)+';'
             logging.debug(f'Query : {query}')
@@ -401,7 +401,7 @@ class mysqlConnector:
             try:
                 entries = kwargs['values']
                 if(type(entries[0]) is not tuple):
-                    query = 'INSERT INTO ' + \
+                    query = 'INSERT O ' + \
                         mysqlConnector.addTicks(kwargs['tableName']) + " VALUES (' "
                     values = kwargs['values']
                     query += "', '".join(str(i) for i in values) + "');"
@@ -412,8 +412,7 @@ class mysqlConnector:
                     if(type(entries[0]) is tuple):
                         query = ''
                         value = list(kwargs['values'])
-                        print(value)
-                        query = "INSERT INTO " + mysqlConnector.addTicks(kwargs['name']) + " VALUES ("
+                        query = "INSERT O " + mysqlConnector.addTicks(kwargs['name']) + " VALUES ("
 
                         sizeOfEntry = [len(i) for i in value]
 
@@ -424,13 +423,12 @@ class mysqlConnector:
                                 query += ','
                             elif i == sizeOfEntry[0]-1:
                                 query += ")"
-                        print(query)
                         self.executeMany(query, value)
                         logging.debug(
                             f' Inserting successful with query: {query}')
 
                         logging.info(
-                            f" Inserting into {kwargs['name']} values :{kwargs['values']}")
+                            f" Inserting o {kwargs['name']} values :{kwargs['values']}")
                     else:
                         logging.critical(
                             f" Parameters should be lists of tuples, given type is : {kwargs['values'].__class__.__name__} of {kwargs['values'][0].__class__.__name__}")
@@ -541,7 +539,7 @@ class mysqlConnector:
                                 f" Where clause should of the type str but given type is: {type(where)}")
                             return
                     self.executeQuery(query)
-                    print(query)
+                   
                 except AssertionError as err:
                     logging.critical(
                         f"Columns field to 'SET' should be of the type DICT but given type is {type(columns)}")
@@ -556,14 +554,14 @@ class mysqlConnector:
                 if (kwargs['colName'] and kwargs['tableName']):
 
                     operation = kwargs.get('operation', False)
-                    print(operation)
+                    pr(operation)
                     if(operation == 'create'):
                         logging.debug(
                             f"Passed --> Table name: {kwargs['tableName']} :: Attribute name: {kwargs['colName']}")
                         query = "CREATE INDEX "+"`" + \
                             kwargs['colName']+"`" + " ON " + \
                                 kwargs['tableName']+"("+kwargs['colName']+")"
-                        print(query)
+                        pr(query)
                         self.executeQuery(query)
 
                     elif (operation == 'drop'):
