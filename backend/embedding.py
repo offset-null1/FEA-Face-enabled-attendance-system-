@@ -84,4 +84,4 @@ class kernel:
 if __name__ == '__main__':
     print('Raw embedding module')
 else:
-    print("Running imported code from kernel.py")
+    pass
