@@ -223,7 +223,7 @@ class mysqlConnector:
                     elif err.errno == errorcode.ER_BAD_DB_ERROR:
                         logging.debug("Database doesn't exist")
                     else:
-                        print(err)
+                        logging.critical(err)
                         
                         
                         
@@ -412,7 +412,6 @@ class mysqlConnector:
                     if(type(entries[0]) is tuple):
                         query = ''
                         value = list(kwargs['values'])
-                        print(value)
                         query = "INSERT INTO " + mysqlConnector.addTicks(kwargs['name']) + " VALUES ("
 
                         sizeOfEntry = [len(i) for i in value]
@@ -424,7 +423,6 @@ class mysqlConnector:
                                 query += ','
                             elif i == sizeOfEntry[0]-1:
                                 query += ")"
-                        print(query)
                         self.executeMany(query, value)
                         logging.debug(
                             f' Inserting successful with query: {query}')
@@ -541,7 +539,7 @@ class mysqlConnector:
                                 f" Where clause should of the type str but given type is: {type(where)}")
                             return
                     self.executeQuery(query)
-                    print(query)
+                   
                 except AssertionError as err:
                     logging.critical(
                         f"Columns field to 'SET' should be of the type DICT but given type is {type(columns)}")
@@ -556,14 +554,12 @@ class mysqlConnector:
                 if (kwargs['colName'] and kwargs['tableName']):
 
                     operation = kwargs.get('operation', False)
-                    print(operation)
                     if(operation == 'create'):
                         logging.debug(
                             f"Passed --> Table name: {kwargs['tableName']} :: Attribute name: {kwargs['colName']}")
                         query = "CREATE INDEX "+"`" + \
                             kwargs['colName']+"`" + " ON " + \
                                 kwargs['tableName']+"("+kwargs['colName']+")"
-                        print(query)
                         self.executeQuery(query)
 
                     elif (operation == 'drop'):
@@ -640,5 +636,7 @@ class mysqlConnector:
 
 if __name__ == '__main__' :
     print("Raw query class")
+
 else:
-    print("Running imported code form msyqlConnector")
+    pass  
+
