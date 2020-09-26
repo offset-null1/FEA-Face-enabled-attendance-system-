@@ -11,7 +11,6 @@ import os,sys
 import cv2
 from matplotlib import pyplot as plt
 import detect_faces
-import time
 
 fileName = sys.argv[0]
 
