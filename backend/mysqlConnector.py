@@ -7,43 +7,42 @@ import logging
 import sys
 import os
 
-import math
 
 fileName = sys.argv[0]
 
 cwd = os.getcwd()
 
-if fileName.startswith('.'):
+if fileName.startswith("."):
     PATH = cwd + fileName[1:]
-elif fileName.startswith('/'):
+elif fileName.startswith("/"):
     PATH = fileName
 else:
-    PATH = cwd + '/' + fileName
+    PATH = cwd + "/" + fileName
 
-logging.info(f' PATH to executable {PATH}')
+logging.info(f" PATH to executable {PATH}")
 
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
 
 
 logging.basicConfig(
-    filename=PATH +'-application.log',
-    format='%(asctime)s.%(msecs)-3d:%(filename)s:%(funcName)s:%(levelname)s:%(lineno)d:%(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S',
+    filename=PATH + "-application.log",
+    format="%(asctime)s.%(msecs)-3d:%(filename)s:%(funcName)s:%(levelname)s:%(lineno)d:%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.DEBUG
 )
 
 
-class mysqlConnector:
+class MysqlConnector:
     def __init__(self, **kwargs):
-        '''
-                USAGE: Accepts dict -> (user='', password='', host='', ....)
-        '''
+        """
+        USAGE: Accepts dict -> (user='', password='', host='', ....)
+        """
 
         try:
 
             self.conn = mysql.connector.connect(**kwargs)
-            logging.info(f' Connecting with :{self.conn}')
+            logging.info(f" Connecting with :{self.conn}")
             self.cursor = self.conn.cursor()
             logging.info(f" Cursor at :{self.cursor}")
 
@@ -289,346 +288,476 @@ class mysqlConnector:
         final.update({database: tables})
 
         return final
-    
-    
-    
-     
 
     def create(self, **kwargs):
-        '''
-                [DDL] To create table or database.
-                USAGE: Accepts dict -> (operation= table/database, tableName/databaseName= '', columns={field1 : {dataType:' ', constraint: ' '/[]}, field2: {... , ...}, ...})
-                To create table or database.
-                Table:  set global innodb_file_per_table=1; (default)
-                        default engine = innodb
-                        default row format = DYNAMIC
-        '''
-        
+        """
+        [DDL] To create table or database.
+        USAGE: Accepts dict -> (operation= table/database, tableName/databaseName= '', columns={field1 : {dataType:' ', constraint: ' '/[]}, field2: {... , ...}, ...})
+        To create table or database.
+        Table:  set global innodb_file_per_table=1; (default)
+                default engine = innodb
+                default row format = DYNAMIC
+        """
+
         logging.info(" In creation.")
         try:
-            if(kwargs['operation'] == 'table'):
-                
-                logging.debug(f'Passed kwargs :{kwargs}')
+            if kwargs["operation"] == "table":
+
+                logging.debug(f"Passed kwargs :{kwargs}")
 
                 try:
-                    query = 'CREATE TABLE ' + mysqlConnector.addTicks(kwargs['tableName']) + ' ('
-                    keys = list(kwargs['columns'].keys())
-                    logging.debug(f' Fields name :{keys}')
+                    query = (
+                        "CREATE TABLE "
+                        + MysqlConnector.addTicks(kwargs["tableName"])
+                        + " ("
+                    )
+                    keys = list(kwargs["columns"].keys())
+                    logging.debug(f" Fields name :{keys}")
 
-                    keyDataType = [i['dataType'] for i in kwargs['columns'].values()]
-                    logging.debug(f' Data type name :{keyDataType}')
+                    keyDataType = [i["dataType"] for i in kwargs["columns"].values()]
+                    logging.debug(f" Data type name :{keyDataType}")
                 except KeyError as err:
-                    logging.critical(' (Table name) or (Datatype for fields) not given')
-                    logging.critical('Retruning none')
+                    logging.critical(" (Table name) or (Datatype for fields) not given")
+                    logging.critical("Retruning none")
                     return
-                 
-                keyConstraint = mysqlConnector.getConstraints(kwargs['columns'])
-                
+
+                keyConstraint = MysqlConnector.getConstraint(kwargs["columns"])
+
                 for i in range(len(keys)):
-                    query += mysqlConnector.addTicks(keys[i]) + ' ' + keyDataType[i] 
-                    if keyConstraint[keys[i]] is not 'empty':
-                        query+= ' '+keyConstraint[keys[i]]
-                    if i != len(keys)-1:
-                        query += ', '
+                    query += MysqlConnector.addTicks(keys[i]) + " " + keyDataType[i]
+                    if keyConstraint[keys[i]] is not "empty":
+                        query += " " + keyConstraint[keys[i]]
+                    if i != len(keys) - 1:
+                        query += ", "
                     else:
-                        query += ')'   
+                        query += ")"
                 try:
-                    rowFormat = kwargs['column']['rowFormat']
-                    query+= f' ROW_FORMAT={rowFormat}'
+                    rowFormat = kwargs["column"]["rowFormat"]
+                    query += f" ROW_FORMAT={rowFormat}"
                 except KeyError as err:
-                    query+= f'ROW_FORMAT=DYNAMIC'
-                    logging.info('Using default row format: DYNAMIC')
-                query+=';'
+                    query += f"ROW_FORMAT=DYNAMIC"
+                    logging.info("Using default row format: DYNAMIC")
+                query += ";"
 
-                logging.debug(f' Create table query :{query}')
+                logging.debug(f" Create table query :{query}")
 
-            elif kwargs['operation'] == 'database':
-                query = 'CREATE DATABASE '+mysqlConnector.addTicks(kwargs['databaseName'])+';'
+            elif kwargs["operation"] == "database":
+                query = (
+                    "CREATE DATABASE "
+                    + MysqlConnector.addTicks(kwargs["databaseName"])
+                    + ";"
+                )
                 logging.debug(f" Create Database query: { query }")
 
-            elif kwargs['operation'] == 'view':
-                
-                #Currently not implemented, will find use case first.
-                
-                pass
-            
+            elif kwargs["operation"] == "view":
+
+                query = (
+                    "CREATE VIEW "
+                    + MysqlConnector.addTicks(kwargs["viewName"])
+                    + " AS SELECT "
+                    + MysqlConnector.addTicks(kwargs["columns"])
+                    + " FROM "
+                    + kwargs["tableName"]
+                    + " INNER JOIN "
+                    + MysqlConnector.addTicks(kwargs["fields"])
+                    + " USING "
+                    + "("
+                    + MysqlConnector.addTicks(kwargs["using"])
+                    + ")"
+                )
+
         except KeyError as err:
-            logging.critical(' Specify operation on table or database, exiting..')
+            logging.critical(" Specify operation on table or database, exiting..")
             return
 
-
-
-
-
-
     def desc(self, tableName):
-        logging.info(' Into describe.')
-        if(tableName):
-            query = 'DESC '+mysqlConnector.addTicks(tableName)+';'
-            logging.debug(f'Query : {query}')
+        logging.info(" o describe.")
+        if tableName:
+            query = "DESC " + MysqlConnector.addTicks(tableName) + ";"
+            logging.debug(f"Query : {query}")
 
             self.executeQuery(query)
             res = self.cursor.fetchall()
 
-            logging.info(f'Response fetchall: {res}')
+            logging.info(f"Response fetchall: {res}")
             return res
 
         else:
             logging.critical(f" Tablename passed in DESC :{tableName}")
 
-
-
-
-
-
     def insert(self, **kwargs):
-        '''
-        
-            [DML] To insert content in db table.
-            USAGE: Accepts dict -> (tableName=' ', values= ' ' / ('val1', 'val2', ....))
-            CAUTION: Table field sequence and given values sequence should match !!
-            
-        '''
+        """
+
+        [DML] To insert content in db table.
+        USAGE: Accepts dict -> (tableName=' ', values= ' ' / ('val1', 'val2', ....))
+        CAUTION: Table field sequence and given values sequence should match !!
+
+        """
         if kwargs:
             try:
-                entries = kwargs['values']
-                if(type(entries[0]) is not tuple):
-                    query = 'INSERT INTO ' + \
-                        mysqlConnector.addTicks(kwargs['tableName']) + " VALUES (' "
-                    values = kwargs['values']
+                entries = kwargs["values"]
+                if type(entries[0]) is not tuple:
+                    query = (
+                        "INSERT INTO "
+                        + MysqlConnector.addTicks(kwargs["tableName"])
+                        + " VALUES (' "
+                    )
+                    values = kwargs["values"]
                     query += "', '".join(str(i) for i in values) + "');"
                     self.executeQuery(query)
-                    logging.debug(f' Inserting successful with query: {query}')
+                    logging.debug(f" Inserting successful with query: {query}")
 
                 else:
-                    if(type(entries[0]) is tuple):
-                        query = ''
-                        value = list(kwargs['values'])
-                        query = "INSERT INTO " + mysqlConnector.addTicks(kwargs['name']) + " VALUES ("
+                    if type(entries[0]) is tuple:
+                        query = ""
+                        value = list(kwargs["values"])
+                        query = (
+                            "INSERT O "
+                            + MysqlConnector.addTicks(kwargs["name"])
+                            + " VALUES ("
+                        )
 
                         sizeOfEntry = [len(i) for i in value]
 
                         for i in range(sizeOfEntry[0]):
-                            query += '%s'
+                            query += "%s"
                             # query += str(kwargs['values'][i])
-                            if i < sizeOfEntry[0]-1:
-                                query += ','
-                            elif i == sizeOfEntry[0]-1:
+                            if i < sizeOfEntry[0] - 1:
+                                query += ","
+                            elif i == sizeOfEntry[0] - 1:
                                 query += ")"
-                        self.executeMany(query, value)
-                        logging.debug(
-                            f' Inserting successful with query: {query}')
 
-                        logging.info(
-                            f" Inserting into {kwargs['name']} values :{kwargs['values']}")
+                        execute = kwargs.get("execute")
+                        if execute:
+                            self.executeMany(query, value)
+                            logging.debug(f" Inserting successful with query: {query}")
+                            logging.info(
+                                f" Inserting into {kwargs['name']} values :{kwargs['values']}"
+                            )
+                        else:
+                            logging.debug(
+                                f' Returning query as "execute" field passed as {execute}'
+                            )
+                            return query
+
                     else:
                         logging.critical(
-                            f" Parameters should be lists of tuples, given type is : {kwargs['values'].__class__.__name__} of {kwargs['values'][0].__class__.__name__}")
+                            f" Parameters should be lists of tuples, given type is : {kwargs['values'].__class__.__name__} of {kwargs['values'][0].__class__.__name__}"
+                        )
 
             except KeyError as err:
-                logging.critical(f' Values are not passed, KeyError:{err}')
+                logging.critical(f" Values are not passed, KeyError:{err}")
 
         else:
-            logging.debug(f' No Parameters passed ')
-
-
-
-
+            logging.debug(f" No Parameters passed ")
 
     def select(self, **kwargs):
-        '''
-            Select query.
-            USAGE: Accepts dict -> (colOption= '*' / 'cols' / list(cols), tableName='', where='', 
-            groupby='', having='')
-        '''
+        """
+        Select query.
+        USAGE: Accepts dict -> (columnName= '*' / 'cols' / list(cols), tableName='', where='',
+        groupby='', having='')
+        """
         if kwargs:
-            colOption = kwargs.get('colOption')
-            tableName = kwargs.get('tableName')
-            where = kwargs.get('where')
-            groupBy = kwargs.get('groupBy')
-            having = kwargs.get('having')
-
+            colOption = kwargs.get("columnName")
+            tableName = kwargs.get("tableName")
+            where = kwargs.get("where")
+            groupBy = kwargs.get("groupBy")
+            having = kwargs.get("having")
+            inner_join = kwargs.get("inner_join")
             if colOption and tableName:
                 query = "SELECT "
-                if colOption is '*':
-                    query+='*'
+                if colOption is "*":
+                    query += "*"
                 elif type(colOption) is str:
-                    query+= mysqlConnector.addTicks(colOption)
+                    query += MysqlConnector.addTicks(colOption)
                 elif type(colOption) is list:
-                    tickedList = mysqlConnector.addTicks(colOption)
-                    tickedCol = ','.join(tickedList)
-                    query+=tickedCol
-                query+=" FROM "+"`"+tableName+"`"
-                
+                    tickedList = MysqlConnector.addTicks(colOption)
+                    tickedCol = ",".join(tickedList)
+                    query += tickedCol
+                query += " FROM " + "`" + tableName + "`"
+
                 if where is None:
                     pass
                 else:
                     try:
-                        assert(type(where) is str)
-                        query += " WHERE "+where
+                        assert type(where) is str
+                        query += " WHERE " + where
                     except AssertionError as err:
                         logging.critical(
-                            f" Where clause should be of type str/None but given type is :{type(where)}")
+                            f" Where clause should be of type str/None but given type is :{type(where)}"
+                        )
                         return
 
                 if groupBy is None:
                     pass
                 else:
                     try:
-                        ofType = type(groupBy)
-                        assert(ofType is str)
-                        query += "GROUP BY " + mysqlConnector.addTicks(groupBy)
+                        # ofType = type(groupBy)
+                        assert type(groupBy) is str
+                        query += "GROUP BY " + MysqlConnector.addTicks(groupBy)
                     except AssertionError as err:
                         logging.critical(
-                            f" Group by clause should be of type str or list but give type is :{ofType}")
+                            f" Group by clause should be of type str or list but give type is :{type(groupBy)}"
+                        )
                         return
 
                 if having is None:
                     pass
                 else:
                     try:
-                        assert(type(having) is str)
-                        query += " HAVING "+having
+                        assert type(having) is str
+                        query += " HAVING " + having
 
                     except AssertionError as err:
                         logging.critical(
-                            f" Having clause should be of type str or list but give type is :{ofType}")
+                            f" Having clause should be of type str or list but give type is :{type(having)}"
+                        )
                         return
-
+                if inner_join is None:
+                    pass
+                else:
+                    try:
+                        assert type(inner_join) is str
+                        query += "INNER JOIN " + inner_join
+                    except AssertionError as err:
+                        logging.critical(
+                            f" Join clause should be of type str or list but give type is :{type(inner_join)}"
+                        )
+                        return
                 self.executeQuery(query)
+                res = self.cursor.fetchall()
+                return res
+
             else:
-                logging.critical('Column name and table name is not passed')
+                logging.critical("Column name and table name is not passed")
         else:
-            logging.debug('No parameters passed to select from')
-            
-            
-            
-            
+            logging.debug("No parameters passed to select from")
 
     def update(self, **kwargs):
-        '''
-            [DML] To update table.
-            USAGE: Accepts dict -> (tableName='', columns={ 'colName' : 'setCondition', : , ... }, where='') 
-        
-        '''
+        """
+        [DML] To update table.
+        USAGE: Accepts dict -> (tableName='', columns={ 'colName' : 'setCondition', : , ... }, where='')
+
+        """
         if kwargs:
-            tableName = kwargs.get('tableName')
-            columns = kwargs.get('columns')
-            where = kwargs.get('where')
+            tableName = kwargs.get("tableName")
+            columns = kwargs.get("columns")
+            where = kwargs.get("where")
             if tableName and columns:
                 try:
-                    assert(type(columns) is dict)
-                    query = "UPDATE "+"`"+tableName+"`"+" SET "
+                    assert type(columns) is dict
+                    query = "UPDATE " + "`" + tableName + "`" + " SET "
                     for i, j in columns.items():
-                        query += "`"+i+"` ="+" '"+j+"'"
+                        query += "`" + i + "` =" + " '" + j + "'"
                     if where:
                         try:
-                            assert(type(where) is str)
-                            query += " WHERE "+where
+                            assert type(where) is str
+                            query += " WHERE " + where
 
                         except AssertionError as err:
                             logging.critical(
-                                f" Where clause should of the type str but given type is: {type(where)}")
+                                f" Where clause should of the type str but given type is: {type(where)}"
+                            )
                             return
-                    self.executeQuery(query)
-                   
+                    execute = kwargs.get("execute")
+                    if execute:
+                        self.executeQuery(query)
+                        logging.warning(f" Execute passed as {execute}")
+                        logging.debug(f"Query: {query}")
+                    else:
+                        logging.debug(f"Returning query, execute passed as {execute}")
+                        logging.debug(f"Query: {query}")
+                        return query
+
                 except AssertionError as err:
                     logging.critical(
-                        f"Columns field to 'SET' should be of the type DICT but given type is {type(columns)}")
-
-
-
+                        f"Columns field to 'SET' should be of the type DICT but given type is {type(columns)}"
+                    )
 
     def index(self, **kwargs):
 
-        if(kwargs):
+        if kwargs:
             try:
-                if (kwargs['colName'] and kwargs['tableName']):
+                if kwargs["colName"] and kwargs["tableName"]:
 
-                    operation = kwargs.get('operation', False)
-                    if(operation == 'create'):
+                    operation = kwargs.get("operation", False)
+                    if operation == "create":
                         logging.debug(
-                            f"Passed --> Table name: {kwargs['tableName']} :: Attribute name: {kwargs['colName']}")
-                        query = "CREATE INDEX "+"`" + \
-                            kwargs['colName']+"`" + " ON " + \
-                                kwargs['tableName']+"("+kwargs['colName']+")"
+                            f"Passed --> Table name: {kwargs['tableName']} :: Attribute name: {kwargs['colName']}"
+                        )
+                        query = (
+                            "CREATE INDEX "
+                            + "`"
+                            + kwargs["colName"]
+                            + "`"
+                            + " ON "
+                            + kwargs["tableName"]
+                            + "("
+                            + kwargs["colName"]
+                            + ")"
+                        )
+
                         self.executeQuery(query)
 
-                    elif (operation == 'drop'):
+                    elif operation == "drop":
                         # ALGORITHM [=] {DEFAULT|INPLACE|COPY}
-                        algo = kwargs.get('algorithm', False)
+                        algo = kwargs.get("algorithm", False)
                         # LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
-                        lock = kwargs.get('lock', False)
+                        lock = kwargs.get("lock", False)
 
                         logging.debug(
-                            f"Passed --> Table name: {kwargs['tableName']} :: Attribute name: {kwargs['colName']} :: Algorithm: {kwargs.get('algorithm')} :: Lock: {kwargs.get('lock')}")
+                            f"Passed --> Table name: {kwargs['tableName']} :: Attribute name: {kwargs['colName']} :: Algorithm: {kwargs.get('algorithm')} :: Lock: {kwargs.get('lock')}"
+                        )
 
-                        if(algo and lock):
-                            query = "DROP INDEX "+"`"+kwargs['colName']+"`"+" "+" ON "+"`"+kwargs['tableName'] + \
-                                "`"+" ALGORITHM = " + \
-                                    kwargs['algorithm']+" LOCK = " + \
-                                kwargs['lock']+" ;"
+                        if algo and lock:
+                            query = (
+                                "DROP INDEX "
+                                + "`"
+                                + kwargs["colName"]
+                                + "`"
+                                + " "
+                                + " ON "
+                                + "`"
+                                + kwargs["tableName"]
+                                + "`"
+                                + " ALGORITHM = "
+                                + kwargs["algorithm"]
+                                + " LOCK = "
+                                + kwargs["lock"]
+                                + " ;"
+                            )
                         elif algo:
-                            query = "DROP INDEX "+"`" + \
-                                kwargs['colName']+"`"+" "+" ON "+"`"+kwargs['tableName'] + \
-                                    "`"+" ALGORITHM = " + \
-                                        kwargs['algorithm']+" ;"
+                            query = (
+                                "DROP INDEX "
+                                + "`"
+                                + kwargs["colName"]
+                                + "`"
+                                + " "
+                                + " ON "
+                                + "`"
+                                + kwargs["tableName"]
+                                + "`"
+                                + " ALGORITHM = "
+                                + kwargs["algorithm"]
+                                + " ;"
+                            )
                         elif lock:
-                            query = "DROP INDEX "+"`" + \
-                                kwargs['colName']+"`"+" "+" ON "+"`"+kwargs['tableName'] + \
-                                    "`"+" ALGORITHM = "+" LOCK = " + \
-                                        kwargs['lock']+" ;"
+                            query = (
+                                "DROP INDEX "
+                                + "`"
+                                + kwargs["colName"]
+                                + "`"
+                                + " "
+                                + " ON "
+                                + "`"
+                                + kwargs["tableName"]
+                                + "`"
+                                + " ALGORITHM = "
+                                + " LOCK = "
+                                + kwargs["lock"]
+                                + " ;"
+                            )
                         else:
-                            query = "DROP INDEX "+"`" + \
-                                kwargs['colName']+"`"+" "+" ON " + \
-                                    "`"+kwargs['tableName']+"` ;"
+                            query = (
+                                "DROP INDEX "
+                                + "`"
+                                + kwargs["colName"]
+                                + "`"
+                                + " "
+                                + " ON "
+                                + "`"
+                                + kwargs["tableName"]
+                                + "` ;"
+                            )
                         self.executeQuery(query)
 
-                    elif (operation == 'show'):
-                        databaseName = kwargs.get('databaseName', False)
-                        if(databaseName):
-                            query = "SHOW INDEXES FROM "+"`" + \
-                                kwargs['databaseName']+"`" + \
-                                    " .`"+kwargs['tableName']+"`"
+                    elif operation == "show":
+                        databaseName = kwargs.get("databaseName", False)
+                        if databaseName:
+                            query = (
+                                "SHOW INDEXES FROM "
+                                + "`"
+                                + kwargs["databaseName"]
+                                + "`"
+                                + " .`"
+                                + kwargs["tableName"]
+                                + "`"
+                            )
                         else:
                             databaseName = (self.getCurrentDatabase())[0][0]
                             if databaseName:
                                 logging.info(
-                                    f' Showing indexes of the default selected Database ')
-                                query = "SHOW INDEXES FROM "+"`"+databaseName + \
-                                    "`"+".`"+kwargs['tableName']+"`"
+                                    f" Showing indexes of the default selected Database "
+                                )
+                                query = (
+                                    "SHOW INDEXES FROM "
+                                    + "`"
+                                    + databaseName
+                                    + "`"
+                                    + ".`"
+                                    + kwargs["tableName"]
+                                    + "`"
+                                )
                             else:
                                 logging.critical(
-                                    " No database is selected, please select/pass database ")
+                                    " No database is selected, please select/pass database "
+                                )
                         self.executeQuery(query)
 
                     else:
-                        logging.critical(' Operation field is empty')
+                        logging.critical(" Operation field is empty")
 
             except KeyError as err:
-                logging.critical(
-                    f' Both Table and column name should be passed ')
+                logging.critical(f" Both Table and column name should be passed ")
 
-
-
+    def procedure(self, **kwargs): #only made for insert and update for now
+        name = kwargs.get("name")
+        handler_action = kwargs.get("handler_action")
+        condition_val = kwargs.get("condition_val")
+        transaction = kwargs.get("transaction")
+        if all([name, handler_action, condition_val, transaction]):
+            proc = (
+                "DELIMITER $$ CREATE PROCEDURE "
+                + MysqlConnector.addTicks(name)
+                + " () BEGIN DECLARE exit handler for sqlexception BEGIN ROLLBACK; END; DECLARE exit handler for sqlwarning BEGIN ROLLBACK; END; START TRANSACTION "
+            )
+            if "insert" in transaction:
+                tableName = kwargs.get("tableName")
+                values = kwargs.get("values")
+                in_query = self.insert(tableName=tableName, values=values, execute=None)
+                proc += in_query + "; "
+            if "update" in transaction:
+                tableName = kwargs.get("tableName")
+                columns = kwargs.get("columns")
+                where = kwargs.get("where")
+                up_query = self.update(
+                    tableName=tableName, columns=columns, where=where
+                )
+                proc += up_query + "; "
+            proc += "COMMIT; END $$ DELIMITER ;"
+            logging.debug(f" Procedure created: {proc}")
+            execute = kwargs.get("execute")
+            if execute:
+                self.cursor.execute(proc)
+                logging.debug(f"Execute passed as {execute}")
+            else:
+                logging.debug(f" Execute passed as {execute}")
+                return proc
 
     def drop(self, tableName=None, databaseName=None):
         if tableName:
-            logging.warning(f' Dropping table :{tableName}')
-            query = "DROP TABLE "+"`"+tableName+"`"
+            logging.warning(f" Dropping table :{tableName}")
+            query = "DROP TABLE " + "`" + tableName + "`"
             self.executeQuery(query)
         elif databaseName:
-            logging.warning(f' Dropping database :{databaseName}')
-            query = "DROP DATABASE "+"`"+databaseName+"`"
+            logging.warning(f" Dropping database :{databaseName}")
+            query = "DROP DATABASE " + "`" + databaseName + "`"
             self.executeQuery(query)
         else:
-            logging.debug(' No table/database passed to drop')
+            logging.debug(" No table/database passed to drop")
 
 
-
-if __name__ == '__main__' :
+if __name__ == "__main__":
     print("Raw query class")
-
 else:
-    pass  
-
+    pass
