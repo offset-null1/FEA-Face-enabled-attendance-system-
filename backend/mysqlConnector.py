@@ -760,14 +760,6 @@ class MysqlConnector:
 
 
 if __name__ == "__main__":
-    # print("Raw query class")
-    a = MysqlConnector()
-    a.insert(
-        tableName="students",
-        values=("1234", "daks", "tom", "asdad@gmail.com", "2212333", "Null", 5),
-    )
-    res = a.select(columnName="*", tableName="students")
-    a.commit()
-    print(res)
+    print("Raw query class")
 else:
     pass
