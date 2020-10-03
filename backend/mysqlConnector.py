@@ -137,69 +137,77 @@ class mysqlConnector:
                         key = j
                     elif type(j) is dict:
                         try:
-                            constraint = j['constraint']
+                            constraint = j["constraint"]
                         except KeyError as err:
-                            logging.info(f' No Contraint for the field :{key} ')
-                            logging.info(' Continuing to next field..')
-                            key_constraint_pair[key]='empty'
+                            logging.info(f" No Contra for the field :{key} ")
+                            logging.info(" Continuing to next field..")
+                            key_constraint_pair[key] = "empty"
                             break
-                
-                    
+
                         if type(constraint) is str:
-                            logging.debug(f' Constraint fetch successful of type {type(constraint)}')
-                            logging.debug(f'key: {key} :: constraint :{constraint}')
-                            key_constraint_pair[key]=constraint
+                            logging.debug(
+                                f" Constraint fetch successful of type {type(constraint)}"
+                            )
+                            logging.debug(f"key: {key} :: constraint :{constraint}")
+                            key_constraint_pair[key] = constraint
 
                         elif type(constraint) is list:
                             try:
                                 assert all(type(i) is str for i in constraint)
-                                constraint = ','.join(constraint)
-                                logging.debug(f' Constraint fetch successful of type {type(constraint)}')
-                                logging.debug(f'key:{key} :: constraint :{constraint}')
-                                key_constraint_pair[key]=constraint
-                        
+                                constraint = ",".join(constraint)
+                                logging.debug(
+                                    f" Constraint fetch successful of type {type(constraint)}"
+                                )
+                                logging.debug(f"key:{key} :: constraint :{constraint}")
+                                key_constraint_pair[key] = constraint
+
                             except AssertionError as err:
-                                logging.critical(f'The contraint list for "{key}" should contain string values, but given :{constraint}')
-                                logging.critical('Returning none')
+                                logging.critical(
+                                    f'The contraint list for "{key}" should containt string values, but given :{constraint}'
+                                )
+                                logging.critical("Returning none")
                                 return
-                            
+
                         else:
-                            logging.critical(f'Contraint type should be either sting or a list of sting, given type :{type(constraint)}')
-                            logging.critical('Returning none')
-                            return 
-                                  
+                            logging.critical(
+                                f"Contraint type should be either sting or a list of sting, given type :{type(constraint)}"
+                            )
+                            logging.critical("Returning none")
+                            return
+
             return key_constraint_pair
         else:
-            logging.critical(' Column passed is null')
-
-
-
+            logging.critical(" Column passed is null")
 
     def executeQuery(self, operation=None, params=None, multi=False):
-        '''
-            [PYTHON MYSQL CONNECTOR UTILITY FUNCTION]
-            Function to execute query in the db engine
-            USAGE: operation->query(str), params->list, multi->bool
-        '''
+        """
+        [PYTHON MYSQL CONNECTOR UTILITY FUNCTION]
+        Function to execute query in the db engine
+        USAGE: operation->query(str), params->list, multi->bool
+        """
 
-        if(operation):
-            if(multi):
+        if operation:
+            if multi:
                 try:
                     logging.info(
-                        f' Query in execution : {operation} :: Params: {params} :: Multi: {multi}')
+                        f" Query in execution : {operation} :: Params: {params} :: Multi: {multi}"
+                    )
 
                     for result in self.cursor.execute(operation, params):
                         if result.is_rows():
                             logging.debug(
-                                f" Rows produced by statement '{result.statement}':")
+                                f" Rows produced by statement '{result.statement}':"
+                            )
                             logging.debug(result.fetchall())
                         else:
                             logging.debug(
-                                f" Number of rows affected by statement '{result.statement}': {result.rowcount}")
+                                f" Number of rows affected by statement '{result.statement}': {result.rowcount}"
+                            )
 
                 except mysql.connector.ProgrammingError as err:
                     logging.info(
-                        f' Query execution failed :{operation} :: Params: {params} :: Multi: {multi}')
+                        f" Query execution failed :{operation} :: Params: {params} :: Multi: {multi}"
+                    )
 
                     if err.errno == errorcode.ER_SYNTAX_ERROR:
                         logging.debug(" Check your syntax")
@@ -212,7 +220,8 @@ class mysqlConnector:
                 try:
                     self.cursor.execute(operation, params)
                     logging.info(
-                        f' Query in execution :{operation} :: Params: {params} :: Multi: {multi}')
+                        f" Query in execution :{operation} :: Params: {params} :: Multi: {multi}"
+                    )
 
                 except mysql.connector.ProgrammingError as err:
 
