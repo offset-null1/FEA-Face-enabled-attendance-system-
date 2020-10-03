@@ -73,65 +73,63 @@ class mysqlConnector:
 
     def getCursor(self):
         return self.cursor
-    
+
     def closeConnection(self):
         self.cursor.close()
         self.conn.close()
-        logging.info(' Connection closed')
-        
-        
-        
-        
+        logging.info(" Connection closed")
+
+    def commit(self):
+        self.conn.commit()
+        logging.warning(" Commit")
+
     @staticmethod
     def addTicks(params=None):
-        '''
-            To add ticks to the user identifiers
-            USAGE: Accepts params of list or str type
-            RETURN TYPE: str
-        '''
+        """
+        To add ticks to the user identifiers
+        USAGE: Accepts params of list or str type
+        RETURN TYPE: str
+        """
 
-        logging.info(
-            f' Adding ticks to params :{params} :: Of type:{type(params)}')
+        logging.info(f" Adding ticks to params :{params} :: Of type:{type(params)}")
 
-        if(params):
+        if params:
             try:
-                assert(type(params) is list or type(params) is str)
-                if(type(params) is list):
+                assert type(params) is list or type(params) is str
+                if type(params) is list:
                     tickParam = []
                     for i in params:
                         if i.isdigit():
                             tickParam.append(i)
                         else:
-                            tickParam.append('`' + i + '`')
-                    logging.debug(f' After adding ticks :{tickParam}')
+                            tickParam.append("`" + i + "`")
+                    logging.debug(f" After adding ticks :{tickParam}")
 
                     return tickParam
 
                 elif type(params) is str:
-                    ticks = ''
-                    ticks = '`' + params + '`'
-                    logging.debug(f' After adding ticks :{ticks}')
+                    ticks = ""
+                    ticks = "`" + params + "`"
+                    logging.debug(f" After adding ticks :{ticks}")
 
                     return ticks
 
             except AssertionError as err:
                 logging.critical(
-                    f' Params given should be either list or string, but given type is :{type(params)}')
+                    f" Params given should be either list or string, but given type is :{type(params)}"
+                )
         else:
-            logging.debug(' Empty parameters list')
-            
-            
-            
-     
-    @staticmethod       
-    def getConstraints(column=None):
-        ''' 
-            Utility function to add the passed key constraints in the query.
-            USAGE: Accepts dictionary of the form : {field1 : {dataType:' ',constraint: ' '/[]}, field2: {... , ...}, ...}
-            constraint key could be a str (if one constraint) or list of sting type (for more than one constraint)
-            RETURN TYPE: dict
-        '''
-        if column:
+            logging.debug(" Empty parameters list")
+
+    @staticmethod
+    def getConstraint(column=None):
+        """
+        Utility function to add the passed key constraint in the query.
+        USAGE: Accepts dictionary of the form : {field1 : {dataType:' ',constraint: ' '/[]}, field2: {... , ...}, ...}
+        constraint key could be a str (if one constraint) or list of stings (for more than one constraint)
+        RETURN TYPE: dict
+        """
+        if column:          #need to update this, not an ideal way so
             key_constraint_pair = {}
             for col in column.items():
                 for j in col:
@@ -224,13 +222,9 @@ class mysqlConnector:
                         logging.debug("Database doesn't exist")
                     else:
                         logging.critical(err)
-                        
-                        
-                        
-                        
 
     def executeMany(self, operation=None, paramsSeq=None):
-        if(operation):
+        if operation:
             try:
                 self.cursor.executemany(operation, paramsSeq)
 
@@ -242,45 +236,34 @@ class mysqlConnector:
                 else:
                     logging.debug(err)
 
-
-
-
     def use(self, databaseName):
 
-        if(databaseName):
+        if databaseName:
             logging.debug(f" Using database: {databaseName}")
-            self.executeQuery(f'USE {databaseName}')
+            self.executeQuery(f"USE {databaseName}")
         else:
-            logging.debug(
-                ' Using database failed, no database passed for use.')
-
-
-
+            logging.debug(" Using database failed, no database passed for use.")
 
     def getCurrentDatabase(self):
 
-        self.executeQuery('SELECT DATABASE();')
+        self.executeQuery("SELECT DATABASE();")
         res = self.cursor.fetchall()
-        logging.info(f' Current database in use :{res}')
+        logging.info(f" Current database in use :{res}")
         if res[0][0] == None:
-            logging.critical('No database is currently in use')
+            logging.critical("No database is currently in use")
         return res
 
-
-
-
-
     def show(self):
-        logging.info(' Show databases in use.')
-        self.executeQuery(' SHOW DATABASES')
+        logging.info(" Show databases in use.")
+        self.executeQuery(" SHOW DATABASES")
         res = self.cursor.fetchall()
-        logging.info(f' Database selected : {res}')
+        logging.info(f" Database selected : {res}")
 
         databases = []
 
         for database in res:
             for stringName in database:
-                if stringName in ['information_schema', 'performance_schema']:
+                if stringName in ["information_schema", "performance_schema"]:
                     continue
                 databases.append(stringName)
 
