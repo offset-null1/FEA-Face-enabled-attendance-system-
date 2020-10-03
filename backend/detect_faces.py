@@ -75,7 +75,7 @@ class detector(camera):
     def detect(self,confidence=0.5):
         net = self.load_model()
         frame = self.getRawFrames()
-        frame = imutils.resize(frame,width=300)
+        frame = imutils.resize(frame,width=1000)
         orig = frame.copy()
         (h,w) = frame.shape[:2]
         blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300,300)), 1.0, (300,300), (104.0,177.0,123.0))
@@ -90,10 +90,13 @@ class detector(camera):
             box = detections[0,0,i,3:7]* np.array([w,h,w,h])
             (startX, startY, endX, endY) = box.astype('int')
             text = '{:.2f}%'.format(this_confidence*100)
-            y = startY - 10 if startY-10>10 else startY+10
+            y = startY - 10 
+            x= endX -90
+            #if startY-10>10 else startY+10
             cv2.rectangle(frame, (startX,startY),(endX,endY), (10,0,10),1) 
-            cv2.putText(frame, text, (startX,y),cv2.FONT_HERSHEY_SIMPLEX, 0.45,(240,126,190), 2) 
-            roi = orig[startY-20:endY+10,startX-20:endX+20]
+            cv2.putText(frame, text, (x,y),cv2.FONT_HERSHEY_SIMPLEX, 0.75,(240,126,190), 2) 
+            roi = orig[startY-40:endY+30,startX-40:endX+40]
+            roi = cv2.resize(roi,(224,224))
             ret1, jpeg_frame = cv2.imencode('.png', frame)
             return jpeg_frame.tobytes(),roi
         ret2, jpeg_orig = cv2.imencode('.png', orig)
