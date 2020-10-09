@@ -30,12 +30,12 @@ logging.basicConfig(
 PATH = os.path.join(os.getcwd(),'embeddings_store')
 
 class Storage:
-    def __init__(self,PATH=None,category=None,subcategory=None):
+    def __init__(self,PATH=None,branch=None,sem=None):
         self.PATH = PATH
-        if category:
-            self.PATH = os.path.join(self.PATH,category)
-        if subcategory:
-            self.PATH = os.path.join(self.PATH,subcategory)
+        if branch:
+            self.PATH = os.path.join(self.PATH,branch)
+        if sem:
+            self.PATH = os.path.join(self.PATH,sem)
 
     def read_bytes(self):
         if os.path.isabs(self.PATH) and self.PATH.endswith('.png'):
@@ -51,5 +51,5 @@ class Storage:
             p = os.path.join(self.PATH,f'{usn}.pickle')
             with open(p,'wb') as f:
                 pickle.dump(data,f)
-            logging.info(f' Dumped image for the usn:{usn} of branch: {self.subcategory} of sem {self.category}')
+            logging.info(f' Dumped image for the usn:{usn} of branch: {self.sem} of sem {self.branch}')
             return p

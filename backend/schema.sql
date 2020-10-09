@@ -26,6 +26,8 @@ create TABLE marks (usn varchar(20),
                     project_marks FLOAT,
                     lab_id varchar(10),
                     lab_marks FLOAT,
+                    ia_no INT,
+                    ia_marks FLOAT,
                     foreign key(usn) REFERENCES students(usn),
                     foreign key(assignment_id, project_id,lab_id) REFERENCES in_sub_categories(assignment_id,project_id,lab_id));
 
@@ -41,4 +43,4 @@ create table attendance (usn varchar(20),
                          FOREIGN KEY(usn) REFERENCES students(usn),
                          FOREIGN KEY(sub_id) REFERENCES semesters(sub_id));
 
-        
+IA        
