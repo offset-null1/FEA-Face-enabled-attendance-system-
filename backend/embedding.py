@@ -56,7 +56,7 @@ class kernel:
             return similarity
 
 
-    def embedding(self,model,img_type='np'):
+    def embedding(self,model):
         batch =[]
         logging.info(f' Building embeddings')
         image = img_to_array(self.data_dict['image'])
