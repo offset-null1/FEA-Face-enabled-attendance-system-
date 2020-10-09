@@ -1,0 +1,194 @@
+{% extends "navbar.html" %}
+
+{% block form %}
+<script src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+<div class="jumbotron" style="margin-top:20px;padding:20px;">    
+  <p><span id="errorMsg"></span></p>  
+
+  <div class="row">    
+      <div class="col-lg-6" >  
+          <div class="text-center">
+              <h1 style="text-align:center">    
+                  Live Training  
+              </h1> 
+          </div>
+             
+          <h4>    
+              Webcam feed  
+          </h4>  
+          
+          <p>
+              <button class="btn btn-primary" id="btnCapture" style="text-align:center" onclick="capture();">Click to capture</button>    
+          </p>
+          <video id="video" playsinline autoplay></video>    
+      </div>    
+  
+      <div class="col-lg-6" class="text-center">    
+          <h4>    
+              Captured image from Webcam    
+          </h4>   
+          <p> 
+    
+              <!-- <input type="button" class="btn btn-primary" id="canvas" name="btnSave" value="Upload to server" />   -->
+
+          </p>   
+          <canvas style="border:solid 1px  rgb(121, 5, 121); background-color:rgb(19, 1, 1);" id="canvas" width="600" height="500"></canvas>    
+      </div>    
+  </div> 
+  <p>
+      <button type="button" class="btn btn-danger btn-lg" style="text-align:center" onclick="redirect();">Cancel</button>
+  </p> 
+ 
+</div> 
+<form action="{{ url_for('form') }}" method="post" > 
+  <!-- onsubmit="send();" -->
+    <fieldset>
+      <legend>REGISTRATION </legend>
+      <!-- <input type="hidden" id="canvas_in" name="canvas_in" /> -->
+    </div>
+    <div class="form-group">
+      <label for="usn">Enter your USN </label>
+      <input type="text" name="usn" class="form-control" id="usn"  placeholder="USN" required>
+      
+    </div>
+
+      <div class="form-group">
+        <label for="fname">Enter your first name </label>
+        <input type="text" name="fname" class="form-control" id="fname"  placeholder="First name" required>
+           
+      </div>
+      <div class="form-group">
+        <label for="lname">Enter your last name </label>
+        <input type="text" name="lname" class="form-control" id="lname"  placeholder="Last name" required>
+        
+      </div>
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" name="email" class="form-control" id="email"  placeholder="Enter email" required autofocus>
+        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+      </div>
+
+    </div>
+    <div class="form-group">
+      <label for="phone_no">Phone Number </label>
+      <input type="phone_no" name="phone_no" class="form-control" id="phone_no"  placeholder="Phone Number" required>
+      
+    </div>
+
+      <div class="form-group">
+        <label for="semester">Select Your Semester</label>
+        <select class="form-control" name="semester" id="semester" required>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="branch">Select Your Semester</label>
+        <select class="form-control" name="branch" id="branch" required>
+          <option>Computer Science Engineering</option>
+          <option>Electronics and Communication Engineering</option>
+          <option>Civil Engineering</option>
+          <option>Mechanical Engineering</option>
+          <option>Textile Engineering</option>
+        </select>
+      </div>
+    </fieldset>
+    <button type="submit" id='submit' class="btn btn-primary" onclick="send();">Submit</button>
+    </fieldset>
+    <p>
+    <small id="Help" class="form-text text-muted" >Submit the form to proceed for the training process.</small>
+    </p>
+    
+</form>
+
+<script>
+       
+        var socket = io('http://localhost:5000/',{
+                   transportOptions: {
+                   polling: {
+                     extraHeaders: {
+                       'Access-Control-Allow-Origin': '*'
+                     }
+                   }
+                 }
+                })
+          
+          socket.on('connect',function(){
+            console.log('connected')
+          });
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true,
+                audio: false,  
+                video: {  
+                    width: 600, height: 500  
+          }   })
+            .then(function (stream) {                                                     //this to access web cam;ok the
+                video.srcObject = stream;
+                video.play();
+             
+            })
+            .catch(function (error) {
+                console.log(error)
+                console.log("Something went wrong!");
+            })
+        }
+      
+      
+        
+      var video = document.querySelector("#video"); 
+
+      var canvas = document.querySelector('canvas');
+      
+      function capture() {  
+            // var canvas = document.getElementById('canvas');  
+            var context = canvas.getContext('2d');  
+            context.drawImage(video, 0, 0);  
+        }; 
+        
+        function send(){    
+            var url =  canvas.toDataURL('image/png');
+
+            var data_url=url.replace('data:image/png;base64,','');
+            console.log(data_url);
+            console.log('IM BEING CALLED');
+
+            $.ajax({
+                url:"http://localhost:5000/form",
+                type: 'POST',
+                dataType:'json',
+                data: data_url,
+                cache:'false',
+                success:function(data){
+                  alert("success");
+                  console.log(data);
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        $('#MsgDiv').html('XMLHttpRequest: ' + XMLHttpRequest + '<br>textStatus: ' + textStatus + '<br>errorThrown: ' + errorThrown);
+                }
+              
+              
+            }).done(function(o){
+              console.log('saved')
+            });
+
+        };                    
+           
+            
+            
+             
+
+      
+        function redirect(){
+            window.location.replace("http://localhost:5000/");
+        }
+      </script>
+
+{% endblock %}
