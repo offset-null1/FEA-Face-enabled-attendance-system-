@@ -396,60 +396,54 @@ class MysqlConnector:
 
         """
         if kwargs:
-            try:
-                entries = kwargs["values"]
-                if type(entries[0]) is not tuple:
-                    query = (
-                        "INSERT INTO "
-                        + MysqlConnector.addTicks(kwargs["tableName"])
-                        + " VALUES (' "
-                    )
-                    values = kwargs["values"]
-                    query += "', '".join(str(i) for i in values) + "');"
+            column = kwargs.get('column')
+            if type(column) is dict:
+                
+                keys = column.keys()
+                values = column.values()
+                query = "INSERT INTO "+ MysqlConnector.addTicks(kwargs["tableName"]) + '('+ MysqlConnector.addTicks(keys) +')' + " VALUES ("+values +');'
+                # self.executeQuery(query)
+                # logging.debug(f" Inserting successful with query: {query}")        
+    
+                    # query += "', '".join(str(i) for i in values) + "');"
+                   
+
+                # else:
+                #     if type(entries[0]) is tuple:
+                #         query = ""
+                #         value = list(kwargs["values"])
+                #         query = (
+                #             "INSERT O "
+                #             + MysqlConnector.addTicks(kwargs["name"])
+                #             + " VALUES ("
+                #         )
+
+                #         sizeOfEntry = [len(i) for i in value]
+
+                #         for i in range(sizeOfEntry[0]):
+                #             query += "%s"
+                #             # query += str(kwargs['values'][i])
+                #             if i < sizeOfEntry[0] - 1:
+                #                 query += ","
+                #             elif i == sizeOfEntry[0] - 1:
+                #                 query += ")"
+
+                execute = kwargs.get("execute")
+                if execute:
                     self.executeQuery(query)
                     logging.debug(f" Inserting successful with query: {query}")
-
+                    logging.info(
+                        f" Inserting into {kwargs['name']} values :{kwargs['values']}"
+                    )
                 else:
-                    if type(entries[0]) is tuple:
-                        query = ""
-                        value = list(kwargs["values"])
-                        query = (
-                            "INSERT O "
-                            + MysqlConnector.addTicks(kwargs["name"])
-                            + " VALUES ("
-                        )
-
-                        sizeOfEntry = [len(i) for i in value]
-
-                        for i in range(sizeOfEntry[0]):
-                            query += "%s"
-                            # query += str(kwargs['values'][i])
-                            if i < sizeOfEntry[0] - 1:
-                                query += ","
-                            elif i == sizeOfEntry[0] - 1:
-                                query += ")"
-
-                        execute = kwargs.get("execute")
-                        if execute:
-                            self.executeMany(query, value)
-                            logging.debug(f" Inserting successful with query: {query}")
-                            logging.info(
-                                f" Inserting into {kwargs['name']} values :{kwargs['values']}"
-                            )
-                        else:
-                            logging.debug(
-                                f' Returning query as "execute" field passed as {execute}'
-                            )
-                            return query
-
-                    else:
-                        logging.critical(
-                            f" Parameters should be lists of tuples, given type is : {kwargs['values'].__class__.__name__} of {kwargs['values'][0].__class__.__name__}"
-                        )
-
-            except KeyError as err:
-                logging.critical(f" Values are not passed, KeyError:{err}")
-
+                    logging.debug(
+                        f' Returning query as "execute" field passed as {execute}'
+                    )
+                    return query     
+            else:
+                logging.critical(
+                    f" Column field,value should be of type dict")
+                         
         else:
             logging.debug(f" No Parameters passed ")
 

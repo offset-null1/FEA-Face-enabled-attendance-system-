@@ -6,4 +6,4 @@ else:
    from . import alignment
    from . import mysqlConnector
    from . import embedding
-   
+   from . import storage
