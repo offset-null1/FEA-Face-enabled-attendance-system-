@@ -59,14 +59,14 @@ class kernel:
     def embedding(image,model):
         batch =[]
         logging.info(f' Building embeddings')
-     
+        logging.info(image.shape)
         image = img_to_array(image)
         logging.debug(f' Received shape type {type} :: shape {image.shape}')
         image = np.expand_dims(image,axis=0)
         image = preprocess_input(image)
         batch.append(image)
         batch = np.vstack(batch)
-        logging.debug(f' Batch shape: {batch.shape}')
+        print(f' Batch shape: {batch.shape}')
         features = model.predict(batch)
         logging.info(f' Raw feature shape: {features.shape}')
         features = features.reshape((features.shape[0], 7*7*512))  
@@ -77,11 +77,11 @@ class kernel:
     
     @staticmethod 
     # db_embedding= {label:' ', embedding: 'vector' or file input}
-    def similarity( db_embeddings=None,image=None,model=None):
-        if db_embeddings.any():
-            cur_embedding = kernel.embedding(model,image)
+    def similarity( embed1,embed2=None,image=None,model=None):
+        if embed1.any() and embed2.any():
+            # cur_embedding = kernel.embedding(model,image)
             # cur_embedding = cur_embedding['embedding']
-            similarity = kernel.cosine_similarity(db_embeddings,cur_embedding)
+            similarity = kernel.cosine_similarity(embed1,embed2)
             return similarity
         
             

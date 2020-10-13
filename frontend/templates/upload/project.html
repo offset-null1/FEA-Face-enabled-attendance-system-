@@ -1,0 +1,34 @@
+{% extends 'upload/upload.html' %}
+{% block project %}
+
+
+<form action="{{ url_for('project') }}" method="post" > 
+
+    <fieldset>
+      <legend>UPLOAD MARKS </legend>
+
+      <div class="form-group">
+        <label for="usn">Enter the USN </label>
+        <input type="text" name="usn" class="form-control" id="usn"  placeholder="USN" required>
+        
+      </div>
+
+      <div class="form-group">
+        <label for="project_id">Enter the Project ID </label>
+        <input type="project_id" name="project_id" class="form-control" id="project_id"  placeholder="Project ID" required>
+      </div> 
+  
+      <div class="form-group">
+          <label for="project_marks">Enter the Project Marks </label>
+          <input type="project_marks" name="project_marks" class="form-control" id="project_marks"  placeholder="Project Marks" required>
+      </div> 
+      
+    </fieldset>
+    <button type="submit" id='submit' class="btn btn-primary" >Submit</button>
+    </fieldset>
+    <p>
+    <small id="Help" class="form-text text-muted" >Submit the form to proceed.</small>
+    </p>
+
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'upload/upload.html' %}
+{% block assign %}
+
+ 
+<form action="{{ url_for('assign') }}" method="post" > 
+
+    <fieldset>
+      <legend>UPLOAD MARKS </legend>
+
+      <div class="form-group">
+        <label for="usn">Enter the USN </label>
+        <input type="text" name="usn" class="form-control" id="usn"  placeholder="USN" required>
+        
+      </div>
+
+      <div class="form-group">
+        <label for="assign_id">Enter the Assignment ID </label>
+        <input type="text" name="assign_id" class="form-control" id="assign_id"  placeholder="Assignment ID" required>
+           
+      </div>
+      <div class="form-group">
+        <label for="assign_marks">Enter the Assignment Marks </label>
+        <input type="text" name="assign_marks" class="form-control" id="assign_marks"  placeholder="Assignment Marks" required>
+        
+    </div>
+      
+    </fieldset>
+    <button type="submit" id='submit' class="btn btn-primary" >Submit</button>
+    </fieldset>
+    <p>
+    <small id="Help" class="form-text text-muted" >Submit the form to proceed.</small>
+    </p>
+
+
+{% endblock %}

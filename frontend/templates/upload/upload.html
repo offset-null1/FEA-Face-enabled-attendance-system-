@@ -1,0 +1,65 @@
+{% extends 'navbar.html' %}
+{% block upload %}
+
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" data-toggle="tab" href="{{url_for('marks')}}">Upload Students marks (ALL)</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" data-toggle="tab" href="{{url_for('assign')}}">Assignment Marks</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" data-toggle="tab" href="{{url_for('ia')}}">IA Marks</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" data-toggle="tab" href="{{url_for('project')}}">Project Marks</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" data-toggle="tab" href="{{url_for('lab')}}">Lab Marks</a>
+    </li>
+    <!-- <li class="nav-item">
+      <a class="nav-link disabled" href="#">Disabled</a>
+    </li> -->
+    <!-- <li class="nav-item dropdown show">
+      <a class="nav-link dropdown-toggle" data-toggle="Upload marks" href="#" role="button" aria-haspopup="true" aria-expanded="true">Upload Marks</a>
+      <div class="dropdown-menu" style="position: absolute; transform: translate3d(0px, 40px, 0px); top: 0px; left: 0px; will-change: transform;" x-placement="bottom-start">
+        <a class="dropdown-item" href="url_for('assign')">Assignment Marks</a>
+        <a class="dropdown-item " href="url_for('ia')">IA Marks</a>
+        <a class="dropdown-item" href="url_for('lab')">Lab Marks</a>
+        <a class="dropdown-item" href="url_for('project')">Project Marks</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="url_for('marks')">All Marks</a>
+      </div>
+    </li> -->
+  </ul>
+  <div id="myTabContent" class="tab-content">
+    <div class="tab-pane fade active show" id="marks">
+      <p>
+        {% block marks %}{% endblock %}
+      </p>
+    </div>
+    <div class="tab-pane fade active show" id="assign">
+      <p>
+        {% block assign %}{% endblock %}
+      </p>
+    </div>
+    <div class="tab-pane fade active show" id="ia">
+      <p>
+        {% block ia %}{% endblock %}
+      </p>
+    </div>
+    <div class="tab-pane fade active show" id="project">
+      <p>
+        {% block project %}{% endblock %}
+      </p>
+    </div>
+    <div class="tab-pane fade active show" id="lab">
+      <p>
+        {% block lab %}{% endblock %}
+      </p>
+    </div>
+  </div>
+
+
+{% endblock %}

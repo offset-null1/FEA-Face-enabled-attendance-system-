@@ -32,7 +32,6 @@ logging.basicConfig(
     level=logging.DEBUG,
 )
 
-
 class MysqlConnector:
     def __init__(self, **kwargs):
         """
@@ -42,11 +41,13 @@ class MysqlConnector:
         try:
 
             self.conn = mysql.connector.connect(
-                user="dakshta", password="dakshta", host="localhost", database="fea"
+                user="dakshta", password="dakshta", host="localhost", db="fea"
             )
             logging.info(f" Connecting with :{self.conn}")
-            self.cursor = self.conn.cursor()
+            self.cursor = self.conn.cursor(buffered=True)
+            self.res = []
             logging.info(f" Cursor at :{self.cursor}")
+           
 
         except mysql.connector.Error as err:
             logging.critical(" Connection Failed")
@@ -60,6 +61,8 @@ class MysqlConnector:
                 logging.critical(" Table doesn't exist")
             else:
                 logging.critical(err)
+                
+
 
     def config(self, **kwargs):
         self.conn.config(**kwargs)
@@ -76,9 +79,10 @@ class MysqlConnector:
         return self.cursor
 
     def closeConnection(self):
-        self.cursor.close()
-        self.conn.close()
-        logging.info(" Connection closed")
+        if self.conn.is_connected():
+            self.conn.close()
+            self.cursor.close()
+            logging.info(" Connection closed")
 
     def commit(self):
         self.conn.commit()
@@ -219,19 +223,36 @@ class MysqlConnector:
 
             else:
                 try:
+                    # if self.conn.is_connected():
+                    #     if not self.cursor:
+                    #         self.cursor=self.conn.cursor()
+                    
                     self.cursor.execute(operation, params)
                     logging.info(
-                        f" Query in execution :{operation} :: Params: {params} :: Multi: {multi}"
-                    )
+                    f" Query in execution :{operation} :: Params: {params} :: Multi: {multi}")
+                    self.commit()
+                    try:
+                
+                        self.res=self.cursor.fetchall()
+                        print("res:",self.res)
+                        return self.res
+                    except mysql.connector.errors.InterfaceError as err:
+                        logging.debug(f' No results to fetch from')
+                        return 'in except block'
 
-                except mysql.connector.ProgrammingError as err:
-
+                except mysql.connector.Error as err:
+                    
+                    self.conn.rollback()
                     if err.errno == errorcode.ER_SYNTAX_ERROR:
-                        logging.debug("Check your syntax")
+                        logging.critical("Check your syntax")
                     elif err.errno == errorcode.ER_BAD_DB_ERROR:
-                        logging.debug("Database doesn't exist")
+                        logging.critical("Database doesn't exist")
                     else:
                         logging.critical(err)
+                # finally:
+                #     self.cursor.close()
+                    
+                    
 
     def executeMany(self, operation=None, paramsSeq=None):
         if operation:
@@ -365,7 +386,7 @@ class MysqlConnector:
                     + " USING "
                     + "("
                     + MysqlConnector.addTicks(kwargs["using"])
-                    + ")"
+                    + ");"
                 )
 
         except KeyError as err:
@@ -391,7 +412,7 @@ class MysqlConnector:
         """
 
         [DML] To insert content in db table.
-        USAGE: Accepts dict -> (tableName=' ', values= ' ' / ('val1', 'val2', ....))
+        USAGE: Accepts dict -> (execute=bool, tableName=' ', values= {'col1':'val1','col2':'val2', ....})
         CAUTION: Table field sequence and given values sequence should match !!
 
         """
@@ -399,8 +420,9 @@ class MysqlConnector:
             column = kwargs.get('column')
             if type(column) is dict:
                 
-                keys = column.keys()
-                values = column.values()
+                keys = list(column.keys())
+                values = list(column.values())
+                values = ','.join([i for i in values])
                 query = "INSERT INTO "+ MysqlConnector.addTicks(kwargs["tableName"]) + '('+ MysqlConnector.addTicks(keys) +')' + " VALUES ("+values +');'
                 # self.executeQuery(query)
                 # logging.debug(f" Inserting successful with query: {query}")        
@@ -520,9 +542,10 @@ class MysqlConnector:
                             f" Join clause should be of type str or list but give type is :{type(inner_join)}"
                         )
                         return
+                query+=';'
+                print(query)
                 self.executeQuery(query)
-                res = self.cursor.fetchall()
-                return res
+                
 
             else:
                 logging.critical("Column name and table name is not passed")

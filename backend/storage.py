@@ -31,11 +31,13 @@ PATH = os.path.join(os.getcwd(),'embeddings_store')
 
 class Storage:
     def __init__(self,PATH=None,branch=None,sem=None):
-        self.PATH = PATH
+        self.PATH = globals()["PATH"]
         if branch:
-            self.PATH = os.path.join(self.PATH,branch)
+            self.branch = branch
+            self.PATH = os.path.join(self.PATH,self.branch)
         if sem:
-            self.PATH = os.path.join(self.PATH,sem)
+            self.sem = sem
+            self.PATH = os.path.join(self.PATH,self.sem)
 
     def read_bytes(self):
         if os.path.isabs(self.PATH) and self.PATH.endswith('.png'):
@@ -48,8 +50,10 @@ class Storage:
             
     def write_bytes(self,data=None,usn=None):
         if os.path.isabs(self.PATH):
+            if not os.path.exists(self.PATH):
+                os.makedirs(self.PATH)
             p = os.path.join(self.PATH,f'{usn}.pickle')
             with open(p,'wb') as f:
                 pickle.dump(data,f)
-            logging.info(f' Dumped image for the usn:{usn} of branch: {self.sem} of sem {self.branch}')
+            logging.info(f' Dumped image for the usn:{usn} of branch: {self.branch} of sem {self.sem}')
             return p
