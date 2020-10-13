@@ -45,7 +45,6 @@ class MysqlConnector:
             )
             logging.info(f" Connecting with :{self.conn}")
             self.cursor = self.conn.cursor(buffered=True)
-            self.res = []
             logging.info(f" Cursor at :{self.cursor}")
            
 
@@ -233,9 +232,9 @@ class MysqlConnector:
                     self.commit()
                     try:
                 
-                        self.res=self.cursor.fetchall()
-                        print("res:",self.res)
-                        return self.res
+                        res=self.cursor.fetchall()
+                        # print("res:",self.res)
+                        return res
                     except mysql.connector.errors.InterfaceError as err:
                         logging.debug(f' No results to fetch from')
                         return 'in except block'
@@ -412,50 +411,27 @@ class MysqlConnector:
         """
 
         [DML] To insert content in db table.
-        USAGE: Accepts dict -> (execute=bool, tableName=' ', values= {'col1':'val1','col2':'val2', ....})
+        USAGE: Accepts dict -> (execute=bool, tableName=' ', column= {'col1':'val1','col2':'val2', ....})
         CAUTION: Table field sequence and given values sequence should match !!
 
         """
         if kwargs:
             column = kwargs.get('column')
+            tableName = kwargs.get('tableName')
             if type(column) is dict:
                 
                 keys = list(column.keys())
                 values = list(column.values())
                 values = ','.join([i for i in values])
-                query = "INSERT INTO "+ MysqlConnector.addTicks(kwargs["tableName"]) + '('+ MysqlConnector.addTicks(keys) +')' + " VALUES ("+values +');'
-                # self.executeQuery(query)
-                # logging.debug(f" Inserting successful with query: {query}")        
+                column=MysqlConnector.addTicks(keys)
+                query = "INSERT INTO "+ MysqlConnector.addTicks(tableName)  + '('+ ','.join(str(i) for i in column) +')' + " VALUES ("+values +');'
     
-                    # query += "', '".join(str(i) for i in values) + "');"
-                   
-
-                # else:
-                #     if type(entries[0]) is tuple:
-                #         query = ""
-                #         value = list(kwargs["values"])
-                #         query = (
-                #             "INSERT O "
-                #             + MysqlConnector.addTicks(kwargs["name"])
-                #             + " VALUES ("
-                #         )
-
-                #         sizeOfEntry = [len(i) for i in value]
-
-                #         for i in range(sizeOfEntry[0]):
-                #             query += "%s"
-                #             # query += str(kwargs['values'][i])
-                #             if i < sizeOfEntry[0] - 1:
-                #                 query += ","
-                #             elif i == sizeOfEntry[0] - 1:
-                #                 query += ")"
-
                 execute = kwargs.get("execute")
                 if execute:
                     self.executeQuery(query)
                     logging.debug(f" Inserting successful with query: {query}")
                     logging.info(
-                        f" Inserting into {kwargs['name']} values :{kwargs['values']}"
+                        f" Inserting into {tableName} values :{kwargs['column']}"
                     )
                 else:
                     logging.debug(
@@ -540,11 +516,10 @@ class MysqlConnector:
                     except AssertionError as err:
                         logging.critical(
                             f" Join clause should be of type str or list but give type is :{type(inner_join)}"
-                        )
-                        return
+                        )       
                 query+=';'
                 print(query)
-                self.executeQuery(query)
+                return self.executeQuery(query)
                 
 
             else:
