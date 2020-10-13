@@ -230,6 +230,7 @@ class MysqlConnector:
                     logging.info(
                     f" Query in execution :{operation} :: Params: {params} :: Multi: {multi}")
                     self.commit()
+                    logging.debug(' Committed')
                     try:
                 
                         res=self.cursor.fetchall()

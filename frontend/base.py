@@ -145,7 +145,7 @@ def assign():
         where = f'usn = {usn}'
         conn = MysqlConnector()
         res=conn.select(tableName='students',columnName='usn',where=where)
-        print(res)
+        
         if res:
             res=conn.insert(
                 execute=True,
@@ -176,7 +176,7 @@ def ia():
         where = f'usn = {usn}'
         conn = MysqlConnector()
         res=conn.select(tableName='students',columnName='usn',where=where)
-        print(res)
+       
         if res:
             res=conn.insert(
                 execute=True,
@@ -241,7 +241,6 @@ def lab():
         where = f'usn = {usn}'
         conn = MysqlConnector()
         res=conn.select(tableName='students',columnName='usn',where=where)
-        print(res)
         if res:
             conn.insert(
                 execute=True,
