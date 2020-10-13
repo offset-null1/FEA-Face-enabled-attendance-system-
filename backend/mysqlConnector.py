@@ -544,7 +544,7 @@ class MysqlConnector:
                 query+=';'
                 print(query)
                 self.executeQuery(query)
-                
+                return
 
             else:
                 logging.critical("Column name and table name is not passed")
