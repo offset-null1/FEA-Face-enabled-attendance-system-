@@ -7,7 +7,7 @@
             FEA
           <small class="text-muted">Face Enabled Attendance System</small>
         </h3></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="true" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarColor01">
@@ -19,14 +19,14 @@
               <a class="nav-link" href="{{ url_for('attendance') }}">Attendance</a>
             </li>
             <li class="nav-item">
-            
+              <a class="nav-link" href="{{ url_for('upload') }}">Upload</a>
             </li>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('form') }}">Registration</a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" data-toggle="Viz" href="#" role="button" aria-haspopup="true" aria-expanded="false">Viz</a>
+              <a class="nav-link dropdown-toggle" data-toggle="Viz" href="#" role="button" aria-haspopup="true" aria-expanded="true">Viz</a>
               <div class="dropdown-menu">
                 <a class="dropdown-item" href="#">Attendance</a>
                 <div class="dropdown-divider"></div>
@@ -55,7 +55,7 @@
         {% block attendance %}{% endblock %}
       </div>
       <div>
-       
+        {% block upload %}{% endblock %}
       </div>
   
 {% endblock %}

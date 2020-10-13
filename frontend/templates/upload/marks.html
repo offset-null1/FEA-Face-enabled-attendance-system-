@@ -1,0 +1,72 @@
+{% extends 'upload/upload.html' %}
+{% block marks %}
+
+<div>
+<form action="{{ url_for('marks') }}" method="post" > 
+  
+    <fieldset>
+      <legend>UPLOAD MARKS </legend>
+ 
+    <div class="form-group">
+      <label for="usn">Enter your USN </label>
+      <input type="text" name="usn" class="form-control" id="usn"  placeholder="USN" required>
+      
+    </div>
+
+      <div class="form-group">
+        <label for="assign_id">Enter the Assignment ID </label>
+        <input type="text" name="assign_id" class="form-control" id="assign_id"  placeholder="Assignment ID" required>
+           
+      </div>
+      <div class="form-group">
+        <label for="assign_marks">Enter the Assignment Marks </label>
+        <input type="text" name="assign_marks" class="form-control" id="assign_marks"  placeholder="Assignment Marks" required>
+        
+    </div>
+
+    <div class="form-group">
+      <label for="ia_no">Select IA Number</label>
+      <select class="form-control" name="ia_no" id="ia_no" required>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+    <label for="ia_marks">Enter the IA Marks </label>
+    <input type="ia_marks" name="ia_marks" class="form-control" id="ia_marks"  placeholder="IA Marks" required>
+    </div>
+
+   
+    <div class="form-group">
+      <label for="project_id">Enter the Project ID </label>
+      <input type="project_id" name="project_id" class="form-control" id="project_id"  placeholder="Project ID" required>
+    </div> 
+
+    <div class="form-group">
+        <label for="project_marks">Enter the Project Marks </label>
+        <input type="project_marks" name="project_marks" class="form-control" id="project_marks"  placeholder="Project Marks" required>
+    </div> 
+
+    <div class="form-group">
+        <label for="lab_id">Enter the Lab ID </label>
+        <input type="lab_id" name="lab_id" class="form-control" id="lab_id"  placeholder="Lab ID" required>
+    </div> 
+
+    <div class="form-group">
+        <label for="lab_marks">Enter the Lab Marks </label>
+        <input type="lab_marks" name="lab_marks" class="form-control" id="lab_marks"  placeholder="Lab Marks" required>
+    </div> 
+   
+    </fieldset>
+    <button type="submit" id='submit' class="btn btn-primary" >Submit</button>
+    </fieldset>
+    <p>
+    <small id="Help" class="form-text text-muted" >Submit the form to proceed.</small>
+    </p>
+      
+</form>
+</div>
+
+{% endblock %}

@@ -1,11 +1,27 @@
 <html>
   <head>
     <title>FEA</title>
+    
+    <link rel="stylesheet" href=" https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css" egrity="sha384-nNK9n28pDUDDgIiIqZ/MiyO3F4/9vsMtReZK39klb/MtkZI3/LtjSjlmyVPS3KdN" crossorigin="anonymous"> 
   </head>
 
 <body>
-  {% block navbar %}{% endblock %}
+   
+  {% with messages = get_flashed_messages(category_filter=["danger"]) %}
+  {% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-dismissible alert-danger"> 
+    <strong>{{ message }}</strong> <a href= "{{ url_for('form') }}" class="alert-link">Register Now.</a>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"> 
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+{% block navbar %}{% endblock %}
+ 
 </body>
       
 </html> 

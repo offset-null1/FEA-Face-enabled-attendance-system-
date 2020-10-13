@@ -36,13 +36,13 @@ logging.basicConfig(
 
 
 class kernel:
-    def __init__(self, **kwargs):
-        try: 
-            self.label = kwargs['label'] 
-            self.data_dict = kwargs['data_dict']        
-        except KeyError as err:
-            logging.critical(' No parameters passed')
-            return
+    # def __init__(self, **kwargs):
+    #     try: 
+    #         self.label = kwargs['label'] 
+    #         self.data_dict = kwargs['data_dict']        
+    #     except KeyError as err:
+    #         logging.critical(' No parameters passed')
+    #         return
 
     @staticmethod
     def load_model():
@@ -55,31 +55,33 @@ class kernel:
             similarity = 1-spatial.distance.cosine(embedding1,embedding2)
             return similarity
 
-
-    def embedding(self,model):
+    @staticmethod 
+    def embedding(image,model):
         batch =[]
         logging.info(f' Building embeddings')
-        image = img_to_array(self.data_dict['image'])
+        logging.info(image.shape)
+        image = img_to_array(image)
         logging.debug(f' Received shape type {type} :: shape {image.shape}')
         image = np.expand_dims(image,axis=0)
         image = preprocess_input(image)
         batch.append(image)
         batch = np.vstack(batch)
-        logging.debug(f' Batch shape: {batch.shape}')
+        print(f' Batch shape: {batch.shape}')
         features = model.predict(batch)
         logging.info(f' Raw feature shape: {features.shape}')
         features = features.reshape((features.shape[0], 7*7*512))  
-        self.data_dict['embedding']=features
+        # self.data_dict['embedding']=features
         logging.debug(f' Return embedding shape {features.shape}')
-        return self.data_dict
+        # return self.data_dict
+        return features
     
-    
+    @staticmethod 
     # db_embedding= {label:' ', embedding: 'vector' or file input}
-    def similarity(self, db_embeddings=None,model=None):
-        if db_embeddings.any():
-            cur_embedding = self.embedding(model)
-            cur_embedding = cur_embedding['embedding']
-            similarity = kernel.cosine_similarity(db_embeddings,cur_embedding)
+    def similarity( embed1,embed2=None,image=None,model=None):
+        if embed1.any() and embed2.any():
+            # cur_embedding = kernel.embedding(model,image)
+            # cur_embedding = cur_embedding['embedding']
+            similarity = kernel.cosine_similarity(embed1,embed2)
             return similarity
         
             

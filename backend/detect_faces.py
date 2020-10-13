@@ -99,11 +99,11 @@ class detector(camera):
             ret1, jpeg_frame = cv2.imencode('.png', frame)
             return jpeg_frame.tobytes(),roi
         ret2, jpeg_orig = cv2.imencode('.png', orig)
-        return jpeg_orig.tobytes(),None
+        return jpeg_orig.tobytes(),frame
                    
 
                 
 if __name__ == '__main__':
     print('Raw detector module')
 else:
-    pass
+    print("Running imported code of detect_faces")
