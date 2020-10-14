@@ -40,12 +40,11 @@
   </p> 
  
 </div> 
-<form action="{{ url_for('form') }}" method="post" onsubmit="send();" > 
+<form action="{{ url_for('form') }}" method="post" onsubmit="post();" > 
   <!-- onsubmit="send();" -->
     <fieldset>
       <legend>REGISTRATION </legend>
       <input id="img" name="img" type="hidden" value="">
-      <input id="s" name="s" type="hidden" value="">
     </div>
     <div class="form-group">
       <label for="usn">Enter your USN </label>
@@ -117,7 +116,7 @@
                 video: {  
                     width: 600, height: 500  
           }   })
-            .then(function (stream) {                                                     //this to access web cam;ok the
+            .then(function (stream) {                                                    
                 video.srcObject = stream;
                 video.play();
              
@@ -131,26 +130,36 @@
       
         
       var video = document.querySelector("#video"); 
-
       var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+      imgArray = []
+
+        function capture(){
+            var i=0;
+            var interval = setInterval(function(){
+                context.drawImage(video, 0, 0);  
+        
+                var url =  canvas.toDataURL('image/png');
+                var data_url=url.replace('data:image/png;base64,','');
+                imgArray.push(data_url);
+                console.log(imgArray[i]);
+                i+=1;
+                console.log(i);
+                if(i==5){
+                    clearInterval(interval);
+                }
+            },1000);
+        };    
+    
+           
+    function post(){
+        document.getElementById('img').value = JSON.stringify(imgArray);
+      }
       
-      function capture() {  
-  
-            var context = canvas.getContext('2d');  
-            context.drawImage(video, 0, 0);  
-        };
 
-      function send(){
-        var url =  canvas.toDataURL('image/png');
-        var data_url=url.replace('data:image/png;base64,','');
-        console.log(data_url);
-        document.getElementById('img').value = data_url;
-
-      }  
-
-      function redirect(){
-            window.location.replace("http://localhost:5000/");
-        }
-      </script>
+    function redirect(){
+        window.location.replace("http://localhost:5000/");
+    }
+</script>
 
 {% endblock %}
