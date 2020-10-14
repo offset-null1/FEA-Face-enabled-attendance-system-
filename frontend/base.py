@@ -13,6 +13,7 @@ import numpy as np
 import cv2
 import sys
 import os
+import json
 
 
 # model = kernel.load_model()
@@ -267,7 +268,7 @@ def form():
 
     if request.method == "POST":
         logging.info(" POST request")
-        img_b64 = request.form.get("img")
+        json_str_img_list = request.form.get("img")
         usn = request.form.get("usn")
         fname = request.form.get("fname")
         lname = request.form.get("lname")
@@ -275,44 +276,51 @@ def form():
         phone_no = request.form.get("phone_no")
         semester = request.form.get("semester")
         branch = request.form.get("branch")
+        
+        if json_str_img_list is not None:
+            img_b64_list = json.loads(json_str_img_list)
+            logging.info(f' Received image set length: {len(img_b64_list)}')
 
-        np_img = decode(img_data=img_b64)
-        print(np_img.shape)
-        # cv2.imshow('img',np_img)
-        # cv2.waitKey(0)
-        align_img = aligner(np_img)
-        print(align_img.shape)
-        model = kernel.load_model()
-        embedding = get_embedding(align_img, model=model)
-        print(type(embedding))
-        b = branch.split(" ")[0]
-        print(b)
-        store = Storage(branch=branch.split(" ")[0], sem=semester)
+            embeddings=[]
+            model = kernel.load_model()
+            for img in img_b64_list:
+                np_img = decode(img_data=img)
+                # cv2.imshow('img',np_img)
+                # cv2.waitKey(0)
+                align_img = aligner(np_img)
+                embeddings.append(get_embedding(align_img, model=model))
+        
+            b = branch.split(" ")[0]
+            print(b)
+            store = Storage(branch=branch.split(" ")[0], sem=semester)
+            file = store.write_bytes(data=embeddings, usn=usn)
 
-        file = store.write_bytes(data=embedding, usn=usn)
-        conn=MysqlConnector()
-        res=conn.insert(
-            execute=True,
-            tableName="students",
-            column={
-                "usn": usn,
-                "fname": fname,
-                "lname": lname,
-                "email": email,
-                "phone_no": phone_no,
-                "semester": semester,
-                "branch": branch,
-                "embedding": file,
-            },
-        )
-        res = conn.select(columnName="*", tableName="students")
-        conn.closeConnection()
-        logging.info(f" Results after commit: {res}")
-        logging.info(" Data received. Now redirecting ...")
 
-        return redirect("/form.html")
+            conn=MysqlConnector()
+            res=conn.insert(
+                execute=True,
+                tableName="students",
+                column={
+                    "usn": usn,
+                    "fname": fname,
+                    "lname": lname,
+                    "email": email,
+                    "phone_no": phone_no,
+                    "semester": semester,
+                    "branch": branch,
+                    "embedding": file,
+                },
+            )
+            res = conn.select(columnName="*", tableName="students")
+            conn.closeConnection()
+            logging.info(f" Results after commit: {res}")
+            logging.info(" Data received. Now redirecting ...")
+
+            return redirect("form.html")
+        else:
+            logging.critical(f' Loaded json is: {type(json_str_img_list)}, storage skipped')
     else:
-        return render_template("/form.html")
+        return render_template("form.html")
 
 
 def decode(img_data=None):
