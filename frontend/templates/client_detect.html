@@ -1,0 +1,122 @@
+{% extends "navbar.html" %}
+
+{% block detect %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js" integrity="sha512-AcZyhRP/tbAEsXCCGlziPun5iFvcSUpEz2jKkx0blkYKbxU81F+iq8FURwPn1sYFeksJ+sDDrI5XujsqSobWdQ==" crossorigin="anonymous"></script>
+<div class="jumbotron" style="margin-top:20px;padding:20px;">    
+  <p><span id="errorMsg"></span></p>  
+
+  <div class="row">    
+      <div class="col-lg-6" >  
+          <div class="text-center">
+              <h1 style="text-align:center">    
+                  DETECT 
+              </h1> 
+          </div>
+       
+          <video id="video" playsinline autoplay ></video>    
+      </div>    
+          
+      <div class="col-lg-6" class="text-center">    
+          <!-- <h4>    
+              Captured image from Webcam    
+          </h4>   
+          <p> 
+            style="border:solid 1px  rgb(121, 5, 121);
+            <input type="button" class="btn btn-primary" id="canvas" name="btnSave" value="Upload to server" />   -->
+
+          </p>   
+           <canvas  style= "background-color:rgb(19, 1, 1);" id="canvas" width="600" height="500"></canvas>  
+      </div> 
+  <p>
+      <button type="button" class="btn btn-success btn-lg" style="text-align:center" onclick="stream();">Start</button>
+  </p>   
+  <p>
+      <button type="button" class="btn btn-danger btn-lg" style="text-align:center" onclick="redirect();">Cancel</button>
+  </p> 
+ 
+<script>
+
+    var socket = io('http://localhost:5000',{
+      transportOptions: {
+        polling: {
+          extraHeaders: {
+            'Access-Control-Allow-Origin': '*'
+          }
+        }
+      }
+    });
+
+    socket.on('connect', function(){
+        console.log("Connected :", socket.connected)
+    });
+
+    var fps;   
+  
+    if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true,
+            audio: false,  
+            video: {  
+                width: 600, height: 500,
+                frameRate: 60
+      }   })
+        .then(function (stream) {                                                    
+            video.srcObject = stream;
+            video.play();
+            fps = stream.getVideoTracks()[0].getSettings().frameRate;
+            console.log(fps)
+         
+        })
+        .catch(function (error) {
+            console.log(error)
+            console.log("Something went wrong!");
+        })
+    }
+           
+    var video = document.querySelector("#video"); 
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+   
+    context.shadowColor = 'purple';
+    context.shadowBlur = 15;
+    
+
+    function stream(){ //on click
+        console.log('Starting emitting..')
+        var interval = setInterval(function(){
+            context.drawImage(video, 0, 0);
+            var url =  canvas.toDataURL('image/png');
+            var frame_url=url.replace('data:image/png;base64,','');
+            socket.emit('frame_url',frame_url);
+            
+        },10);  
+    };  
+
+
+        //  function(x,y,w,h){
+        // console.log(x,y,w,h)
+        // context.lineWidth = "6";
+        // for (let i = 0; i < 6; i++) {
+        //     for (let j = 0; j < 6; j++) {
+        //         ctx.strokeStyle = `rgb(
+        //         0,
+        //         ${Math.floor(255 - 42.5 * i)},
+        //         ${Math.floor(255 - 42.5 * j)})`;    
+        //         context.beginPath();
+        //         context.rect(x,y,w,h);
+        //         context.stroke();
+        //     }
+        // } 
+    socket.on('detect',function(data){
+        console.log(data)
+    });
+
+    socket.on('disconnect',function(msg){
+        console.log('Disconnected :',socket.disconnected)
+    })
+
+    function redirect(){
+        window.location.replace("http://localhost:5000/");
+    }
+</script>
+
+{% endblock %}
