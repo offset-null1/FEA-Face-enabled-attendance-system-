@@ -16,9 +16,6 @@ import os
 import json
 
 
-# model = kernel.load_model()
-
-
 fileName = sys.argv[0]
 
 cwd = os.getcwd()
@@ -47,12 +44,9 @@ mpl_logger = logging.getLogger("__init__")
 mpl_logger.setLevel(logging.ERROR)
 EMBED_PATH = os.path.join(cwd, "students_embedding")
 
-
 app = Flask(__name__)
 app.secret_key=os.urandom(24)
 conn = MysqlConnector()
-
-
 
 @app.route("/")
 def base():
@@ -70,12 +64,13 @@ def gen(detector_obj):
 
 @app.route("/video")
 def video():
+    Detector = detector()  
     return Response(
-        gen(detector()), mimetype="multipart/x-mixed-replace; boundary=frame"
+        gen(Detector), mimetype="multipart/x-mixed-replace; boundary=frame" 
     )
 
 
-@app.route("/attendance/")
+@app.route("/attendance")
 def attendance():
     return render_template("video_feed.html")
 
@@ -346,7 +341,8 @@ def get_embedding(image=None, model=None):
         return kernel.embedding(align_img, model)
     else:
         logging.critical(" Make sure image is captured and streamed in proper format")
-
+        
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

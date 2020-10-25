@@ -229,13 +229,15 @@ class MysqlConnector:
                     logging.info(
                     f" Query in execution :{operation} :: Params: {params} :: Multi: {multi}")
                     self.commit()
+                    logging.debug(' Committed')
                     try:
                 
                         res=self.cursor.fetchall()
+                        # print("res:",self.res)
                         return res
                     except mysql.connector.errors.InterfaceError as err:
                         logging.debug(f' No results to fetch from')
-                        
+                        return 'in except block'
 
                 except mysql.connector.Error as err:
                     
