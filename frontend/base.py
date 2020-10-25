@@ -284,9 +284,7 @@ def form():
                 # cv2.waitKey(0)
                 align_img = aligner(np_img)
                 embeddings.append(get_embedding(align_img, model=model))
-        
-            b = branch.split(" ")[0]
-            print(b)
+       
             store = Storage(branch=branch.split(" ")[0], sem=semester)
             file = store.write_bytes(data=embeddings, usn=usn)
 
