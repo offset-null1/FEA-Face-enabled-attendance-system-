@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include <device_launch_parameters.h>
@@ -15,7 +16,7 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
     }
 }
 
-__global__ void kernel(unsigned char *in, unsigned char* out, uint frameWidth, uint frameframeHeight){
+__global__ void kernel(unsigned char *in, unsigned char* out, uint frameWidth, uint frameHeight){
 
    uint col = blockDim.x * blockIdx.x + threadIdx.x;
    uint row = blockDim.y * blockIdx.y + threadIdx.y;
@@ -72,13 +73,13 @@ __global__ void kernel(unsigned char *in, unsigned char* out, uint frameWidth, u
     //end storing
 
     //filter setup
-    unsigned char filterWindow[9] = { window[threadIdx.x][threadIdx.y]    , window[threadIdx.x + 1][threadIdx.y]    , window[threadIdx.x+2][threadIdx.y]      ,
-                                      window[threadIdx.x][threadIdx.y + 1], window[threadIdx.x + 1][threadIdx.y + 1], window[threadIdx.x + 2][threadIdx.y + 1],
-                                      window[threadIdx.x][threadIdx.y + 2], window[threadIdx.x + 1][threadIdx.y + 2], window[threadIdx.x + 2][threadIdx.y + 2]  };
-    
-    //sort
+    if(col<(frameWidth-1) && row<(frameHeight-1)){
+        unsigned char filterWindow[9] = { window[threadIdx.x][threadIdx.y]    , window[threadIdx.x + 1][threadIdx.y]    , window[threadIdx.x+2][threadIdx.y]      ,
+            window[threadIdx.x][threadIdx.y + 1], window[threadIdx.x + 1][threadIdx.y + 1], window[threadIdx.x + 2][threadIdx.y + 1],
+            window[threadIdx.x][threadIdx.y + 2], window[threadIdx.x + 1][threadIdx.y + 2], window[threadIdx.x + 2][threadIdx.y + 2]  };
 
-    {
+//sort
+    
         for(uint i=0 ; i<9 ; ++i){
             for(uint j=i+1 ; j<9 ; ++j){
                 if(filterWindow[i] > filterWindow[j]){
@@ -88,15 +89,11 @@ __global__ void kernel(unsigned char *in, unsigned char* out, uint frameWidth, u
                 }
             }
         }
-        
+    
         out[(row * frameWidth) + col] = filterWindow[4]; //store median
     }
 
-
 }
-
-
-
 
 
 extern "C"{
@@ -107,8 +104,8 @@ extern "C"{
         uint frameWidth = in_frame.cols;
         uint frameHeight = in_frame.rows;
     
-        size_t d_ipSize = in_frame.step * in_frame.rows;
-        size_t d_outSize = out_frame.step * out_frame.rows;
+        size_t d_ipSize = in_frame.cols * in_frame.rows;
+        size_t d_outSize = (in_frame.cols/2) * (in_frame.rows/2);
     
         cudaEvent_t start,stop;
     
@@ -117,7 +114,7 @@ extern "C"{
         gpuErrchk( cudaEventRecord(start) );
       
         gpuErrchk( cudaMalloc( (void**)& in, d_ipSize) );
-        gpuErrchk( cudaMalloc( (void**)& out, d_outSize) );
+        gpuErrchk( cudaMalloc( (void**)& out, d_ipSize) );
 
         gpuErrchk( cudaMemcpy( in, in_frame.data, d_ipSize, cudaMemcpyHostToDevice) );                  
    
@@ -128,7 +125,7 @@ extern "C"{
     
         gpuErrchk( cudaDeviceSynchronize() );
     
-        gpuErrchk( cudaMemcpy( out_frame.data, out, d_outSize, cudaMemcpyDeviceToHost ) );
+        gpuErrchk( cudaMemcpy( out_frame.data, out, d_ipSize, cudaMemcpyDeviceToHost ) );
     
         cudaFree(in);
         cudaFree(out);
@@ -137,7 +134,8 @@ extern "C"{
         float time = 0;
         cudaEventElapsedTime(&time, start, stop);
     
-        std::cout<<"Time :"<<time<<"\n";
+        // std::cout<<"Time :"<<time<<"\n";
+        printf("time %f\n", time); 
        
     }
 }
