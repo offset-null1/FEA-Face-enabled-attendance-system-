@@ -19,9 +19,8 @@ int main(){
     //    destroyAllWindows(); 
     // }
    
-    Mat out_frame;
-    int rows = in_frame.rows;
-    int cols = in_frame.cols;
+    Mat out_frame(Size(in_frame.rows,in_frame.cols), CV_8UC1);
+
     unsigned char* data = in_frame.data;
     take_input(in_frame,out_frame);
 

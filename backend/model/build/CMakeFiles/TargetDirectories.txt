@@ -1,0 +1,3 @@
+/home/daksh/VeriFace/backend/torch_t/build/CMakeFiles/rebuild_cache.dir
+/home/daksh/VeriFace/backend/torch_t/build/CMakeFiles/edit_cache.dir
+/home/daksh/VeriFace/backend/torch_t/build/CMakeFiles/loss.dir
