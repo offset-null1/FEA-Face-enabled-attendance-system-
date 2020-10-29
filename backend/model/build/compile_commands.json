@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/daksh/VeriFace/backend/torch_t/build",
-  "command": "/usr/bin/g++-7  -DAT_PARALLEL_OPENMP=1 -D_THP_CORE -isystem /home/daksh/libtorch/include -isystem /home/daksh/libtorch/include/torch/csrc/api/include -isystem /usr/local/cuda-11.0/include  -g   -D_GLIBCXX_USE_CXX11_ABI=0 -std=gnu++14 -o CMakeFiles/loss.dir/loss.cpp.o -c /home/daksh/VeriFace/backend/torch_t/loss.cpp",
-  "file": "/home/daksh/VeriFace/backend/torch_t/loss.cpp"
-}
-]
