@@ -9,33 +9,39 @@ extern "C"
 {
 #endif //__cplusplus
 
-enum Layer{ CONV64, CONV128, CONV256, CONV512, MAXPOOL, AVGPOOL };
-
-    class resNetImpl : public torch::nn::Module {
-
-        public:
-            resNetImpl(const std::vector<Layer>& config, const::set<size_t>& selected, bool batch_norm, const std::string& scriptmodule_file_path);
-            std::vector<torch::Tensor> forward(torch::Tensor x);
-            void set_selected_layer_idxs(const std::set<size_t>& idxs){ selected_layer_idxs_= idxs; }
-            std::set<size_t> get_selected_layer_idxs() const { return selected_layer_idxs_; }
-
-        private:
-            torch::nn::Sequential make_layers(const std::vector<Layer>& config, bool batch_norm);
-
-            torch::nn::Sequential layers;
-            std::set<size_t> selected_layer_idxs_;
-
-    };
-    TORCH_MODULE(resNet);
-
-
-    class resNet18Impl : public resNetImpl {
-
-        public:
-            resNet18Impl(const std::string& scriptmodule_file_path = {}, const std::set<size_t>& selected_layer_idxs = {0, 5, 10, 19, 28}); 
+struct baseBlock : torch::nn::Module{
+ 
+    baseBlock(int64_t in_channel, int64_t out_channel, int64_t stride=1 );
+    torch::Tensor forward(torch::Tensor x);
     
-    };
-    TORCH_MODULE(resNet18);
+    static const int num_seq;
+
+    int64_t stride;
+    torch::nn::Conv2d conv1;
+    torch::nn::BatchNorm bn1;
+    torch::nn::Conv2d conv2;
+    torch::nn::BatchNorm bn2;
+    torch::nn::Sequential residual;    
+
+};
+template<class num_seq>
+struct resnet : torch::nn::module{
+
+    resnet(torch::IntList layers, int64_t classes );
+    void init_weight();
+    torch::Tensor forward(torch::Tensor x);
+
+    int64_t inplanes = 64;
+    torch::nn::Conv2d conv1;
+    torch::nn::BatchNorm bn1;
+    torch::nn::Sequential layer1;
+    torch::nn::Sequential layer2;
+    torch::nn::Sequential layer3;
+    torch::nn::Sequential layer4;
+    torch::nn::Linear fc;
+
+
+};
 
 #ifdef __cplusplus
 }
