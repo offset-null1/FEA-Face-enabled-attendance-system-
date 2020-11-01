@@ -42,7 +42,7 @@ struct resnet : torch::nn::module{
 
 
 };
-
+git
 #ifdef __cplusplus
 }
 #endif //__cplusplus
