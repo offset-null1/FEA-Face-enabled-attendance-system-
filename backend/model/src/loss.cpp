@@ -3,7 +3,7 @@
 #include <torch/torch.h>
 #include <iostream>
 #include <math.h>
-#include "../loss.h"
+#include "../include/loss.h"
 
 
 using namespace torch;
