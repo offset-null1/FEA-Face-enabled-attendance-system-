@@ -64,11 +64,11 @@ CMakeFiles/model.dir/src/loss.cpp.o: ../src/loss.cpp
 
 CMakeFiles/model.dir/src/loss.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/model.dir/src/loss.cpp.i"
-	/usr/bin/g++-6 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/daksh/VeriFace/backend/model/src/loss.cpp > CMakeFiles/model.dir/src/loss.cpp.i
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CXX_CREATE_PREPROCESSED_SOURCE
 
 CMakeFiles/model.dir/src/loss.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/model.dir/src/loss.cpp.s"
-	/usr/bin/g++-6 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/daksh/VeriFace/backend/model/src/loss.cpp -o CMakeFiles/model.dir/src/loss.cpp.s
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CXX_CREATE_ASSEMBLY_SOURCE
 
 CMakeFiles/model.dir/src/loss.cpp.o.requires:
 
@@ -88,11 +88,11 @@ CMakeFiles/model.dir/src/resnet.cpp.o: ../src/resnet.cpp
 
 CMakeFiles/model.dir/src/resnet.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/model.dir/src/resnet.cpp.i"
-	/usr/bin/g++-6 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/daksh/VeriFace/backend/model/src/resnet.cpp > CMakeFiles/model.dir/src/resnet.cpp.i
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CXX_CREATE_PREPROCESSED_SOURCE
 
 CMakeFiles/model.dir/src/resnet.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/model.dir/src/resnet.cpp.s"
-	/usr/bin/g++-6 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/daksh/VeriFace/backend/model/src/resnet.cpp -o CMakeFiles/model.dir/src/resnet.cpp.s
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CXX_CREATE_ASSEMBLY_SOURCE
 
 CMakeFiles/model.dir/src/resnet.cpp.o.requires:
 
@@ -116,13 +116,13 @@ model_EXTERNAL_OBJECTS =
 model: CMakeFiles/model.dir/src/loss.cpp.o
 model: CMakeFiles/model.dir/src/resnet.cpp.o
 model: CMakeFiles/model.dir/build.make
-model: /home/daksh/libtorch/lib/libtorch.so
 model: /home/daksh/libtorch/lib/libc10.so
-model: /usr/lib/x86_64-linux-gnu/libcuda.so
-model: /usr/lib/x86_64-linux-gnu/libnvrtc.so
-model: /usr/lib/x86_64-linux-gnu/libnvToolsExt.so
+model: /usr/local/cuda-11.0/lib64/stubs/libcuda.so
+model: /usr/local/cuda-11.0/lib64/libnvrtc.so
+model: /usr/local/cuda-11.0/lib64/libnvToolsExt.so
 model: /usr/local/cuda-11.0/lib64/libcudart.so
 model: /home/daksh/libtorch/lib/libc10_cuda.so
+model: /home/daksh/libtorch/lib/libtorch.so
 model: /home/daksh/libtorch/lib/libc10_cuda.so
 model: /home/daksh/libtorch/lib/libc10.so
 model: /usr/local/cuda/lib64/libnvToolsExt.so

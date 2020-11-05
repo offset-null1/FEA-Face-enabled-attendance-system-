@@ -7,7 +7,6 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/daksh/VeriFace/backend/model/src/loss.cpp" "/home/daksh/VeriFace/backend/model/build/CMakeFiles/model.dir/src/loss.cpp.o"
   "/home/daksh/VeriFace/backend/model/src/resnet.cpp" "/home/daksh/VeriFace/backend/model/build/CMakeFiles/model.dir/src/resnet.cpp.o"
   )
-set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # Preprocessor definitions for this target.
 set(CMAKE_TARGET_DEFINITIONS_CXX

@@ -1,12 +1,12 @@
 [
 {
   "directory": "/home/daksh/VeriFace/backend/model/build",
-  "command": "/usr/bin/g++-6  -DAT_PARALLEL_OPENMP=1 -D_THP_CORE -I/home/daksh/VeriFace/backend/model/include -isystem /home/daksh/libtorch/include -isystem /home/daksh/libtorch/include/torch/csrc/api/include -isystem /usr/local/cuda-11.0/include  -g   -D_GLIBCXX_USE_CXX11_ABI=0 -std=gnu++14 -o CMakeFiles/model.dir/src/loss.cpp.o -c /home/daksh/VeriFace/backend/model/src/loss.cpp",
+  "command": "/usr/bin/g++-6  -DAT_PARALLEL_OPENMP=1 -D_THP_CORE -I/home/daksh/VeriFace/backend/model/include -I/home/daksh/libtorch/include -I/home/daksh/libtorch/include/torch/csrc/api/include -I/usr/local/cuda-11.0/include    -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-write-strings -Wno-unknown-pragmas -Wno-missing-braces -fopenmp -o CMakeFiles/model.dir/src/loss.cpp.o -c /home/daksh/VeriFace/backend/model/src/loss.cpp",
   "file": "/home/daksh/VeriFace/backend/model/src/loss.cpp"
 },
 {
   "directory": "/home/daksh/VeriFace/backend/model/build",
-  "command": "/usr/bin/g++-6  -DAT_PARALLEL_OPENMP=1 -D_THP_CORE -I/home/daksh/VeriFace/backend/model/include -isystem /home/daksh/libtorch/include -isystem /home/daksh/libtorch/include/torch/csrc/api/include -isystem /usr/local/cuda-11.0/include  -g   -D_GLIBCXX_USE_CXX11_ABI=0 -std=gnu++14 -o CMakeFiles/model.dir/src/resnet.cpp.o -c /home/daksh/VeriFace/backend/model/src/resnet.cpp",
+  "command": "/usr/bin/g++-6  -DAT_PARALLEL_OPENMP=1 -D_THP_CORE -I/home/daksh/VeriFace/backend/model/include -I/home/daksh/libtorch/include -I/home/daksh/libtorch/include/torch/csrc/api/include -I/usr/local/cuda-11.0/include    -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-write-strings -Wno-unknown-pragmas -Wno-missing-braces -fopenmp -o CMakeFiles/model.dir/src/resnet.cpp.o -c /home/daksh/VeriFace/backend/model/src/resnet.cpp",
   "file": "/home/daksh/VeriFace/backend/model/src/resnet.cpp"
 }
 ]
