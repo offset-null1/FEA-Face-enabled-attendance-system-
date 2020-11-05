@@ -2,6 +2,7 @@
 #define RESNET
 
 #include <torch/torch.h>
+#include <vector>
 #include "loss.h"
 
 #ifdef __cplusplus
@@ -9,9 +10,9 @@ extern "C"
 {
 #endif //__cplusplus
 
-struct baseBlock : torch::nn::Module{
+struct baseBlockImpl : torch::nn::Module{
  
-    baseBlock(int64_t in_channel, int64_t out_channel, int64_t stride=1 );
+    baseBlockImpl(int64_t in_channel, int64_t out_channel, int64_t stride=1);
     torch::Tensor forward(torch::Tensor x);
     
     static const int num_seq;
@@ -21,17 +22,20 @@ struct baseBlock : torch::nn::Module{
     torch::nn::BatchNorm bn1;
     torch::nn::Conv2d conv2;
     torch::nn::BatchNorm bn2;
-    torch::nn::Sequential residual;    
+    torch::nn::Sequential downsample = torch::nn::Sequential();    
 
 };
-template<class num_seq>
-struct resnet : torch::nn::module{
+TORCH_MODULE(baseBlock);
 
-    resnet(torch::IntList layers, int64_t classes );
+
+struct resnetImpl : torch::nn::Module{
+
+    resnetImpl(std::vector<int64_t> layers, int64_t classes );
     void init_weight();
     torch::Tensor forward(torch::Tensor x);
 
     int64_t inplanes = 64;
+    int64_t num_layers = 4;
     torch::nn::Conv2d conv1;
     torch::nn::BatchNorm bn1;
     torch::nn::Sequential layer1;
@@ -40,9 +44,9 @@ struct resnet : torch::nn::module{
     torch::nn::Sequential layer4;
     torch::nn::Linear fc;
 
-
 };
-git
+TORCH_MODULE(resnet);
+
 #ifdef __cplusplus
 }
 #endif //__cplusplus
