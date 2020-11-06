@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/daksh/VeriFace/backend/model/build",
+  "command": "/usr/bin/g++-6  -DAT_PARALLEL_OPENMP=1 -D_THP_CORE -I/home/daksh/VeriFace/backend/model/include -I/usr/local/include -I/usr/local/include/torch/csrc/api/include -I/usr/local/cuda-11.0/include    -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-write-strings -Wno-unknown-pragmas -Wno-missing-braces -fopenmp -o CMakeFiles/model.dir/main.cpp.o -c /home/daksh/VeriFace/backend/model/main.cpp",
+  "file": "/home/daksh/VeriFace/backend/model/main.cpp"
+}
+]
