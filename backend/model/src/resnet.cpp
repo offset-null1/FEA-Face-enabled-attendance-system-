@@ -6,27 +6,29 @@
 
     torch::Device device_ = torch::kCPU;
 
-    inline torch::nn::Conv2dOptions setConvOpt(int64_t in_channel, int64_t out_channel, int64_t kernel_size=3, int64_t stride=1, int64_t padding=0, bool with_bias=false){
+    inline torch::nn::Conv2dOptions setConvOpt(int64_t in_channel, int64_t out_channel, int64_t kernel_size=3, int64_t stride=1, int64_t padding=1, bool with_bias=false){
         return torch::nn::Conv2dOptions(in_channel,out_channel,kernel_size).stride(stride).padding(padding).with_bias(with_bias); 
     }
 
 
-    baseBlock::baseBlockImpl(int64_t inChannel, int64_t outchannel, int64_t stride=1)
+    baseBlock::baseBlockImpl(int64_t in_channel, int64_t out_channel, int64_t stride=1)
         :   stride(stride),
-            conv1(setConvOpt(inChannel,outchannel,stride)),
-            bn1(outchannel),
-            conv2(setConvOpt(inChannel,outchannel,stride)),
-            bn2(outchannel)
+            conv1(setConvOpt(in_channel,out_channel,stride)),
+            bn1(out_channel),
+            conv2(setConvOpt(out_channel,out_channel,stride=1)),
+            bn2(out_channel)
         {
             register_module("conv1", conv1);
             register_module("bn1", bn1);
             register_module("conv2", conv2);
             register_module("bn2", bn2);
 
-            bool condition = (inChannel!=outchannel);
+            bool condition = (in_channel!=out_channel);
 
             if(condition){
-                downsample(setConvOpt(inChannel,outchannel,1,2);
+                downsample(setConvOpt(in_channel,out_channel,1,2) ,
+                torch::nn::BatchNorm(out_channel)) ;
+
                 register_module("downsample", downsample);
             }
 
@@ -105,3 +107,22 @@
     }
         
         
+    torch::nn::Sequential make_layer(int64_t in_channel, int64_t blocks, int64_t stride=1){
+            
+        torch::nn::Sequential layers;
+
+        if(stride !=1){
+            baseBlock b(in_channel/2, in_channel, stride);
+            layers->push_back(b);
+            --blocks;
+        }
+
+        for(int i=0; i<blocks ; ++i){
+        
+            baseBlock b(in_channel, in_channel, stride);
+            layers->push_back(b);
+        }
+            
+        return layers;  
+      
+    }
