@@ -4,7 +4,7 @@
 #include "../include/loss.h"
 #include "../include/resnet.h"
 
-    torch::Device device_ = torch::kCPU;
+    // torch::Device device_ = torch::kCPU;
 
     inline torch::nn::Conv2dOptions setConvOpt(int64_t in_channel, int64_t out_channel, int64_t kernel_size=3, int64_t stride=1, int64_t padding=1, bool with_bias=false){
         return torch::nn::Conv2dOptions(in_channel,out_channel,kernel_size).stride(stride).padding(padding).with_bias(with_bias); 
@@ -32,17 +32,17 @@
                 register_module("downsample", downsample);
             }
 
-            if(torch::cuda::is_available()){
-                std::cout << "Using CUDA for training" << '\n';
-                device_ = torch::kCUDA;
+            // if(torch::cuda::is_available()){
+            //     std::cout << "Using CUDA for training" << '\n';
+            //     device_ = torch::kCUDA;
                 
-                c1->to(device_);
-                c2->to(device_);
-                b1->to(device_);
-                b2->to(device_);
-                if(condition)
-                    downsample->to(device_);
-            }
+            //     c1->to(device_);
+            //     c2->to(device_);
+            //     b1->to(device_);
+            //     b2->to(device_);
+            //     if(condition)
+            //         downsample->to(device_);
+            // }
 
         }
 
@@ -76,7 +76,7 @@
             layer2(make_layer(128, layers[1], 2)),
             layer3(make_layer(256, layers[2], 2)),
             layer4(make_layer(512, layers[3], 2)),
-            fc(512 * num_layers, classes)
+            fc(512, classes)
         {
             register_module("conv1", conv1);
             register_module("bn1", bn1);

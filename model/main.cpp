@@ -4,6 +4,8 @@
 #include "include/resnet.h"
 
 int main(){
-    
+
+    std::cout<<std::boolalpha;
+    std::cout<<1;
     return 0;
 }
