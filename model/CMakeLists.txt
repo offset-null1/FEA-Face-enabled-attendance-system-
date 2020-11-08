@@ -1,12 +1,21 @@
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(model)
+cmake_minimum_required(VERSION 3.0.0)
+project(model VERSION 0.1.0)
+
+include(CTest)
+enable_testing()
 
 find_package(Torch REQUIRED)
+find_package(OpenCV 4.1.0 REQUIRED)
 
-include_directories(include)
+include_directories(${OpenCV_INCLUDE_DIRS})
 
-add_executable(model main.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
 
-target_link_libraries(model "${TORCH_LIBRARIES}")
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME} "${TORCH_LIBRARIES}")
 
-set_property(TARGET model PROPERTY CXX_STANDARD 14)
+set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
+include(CPack)

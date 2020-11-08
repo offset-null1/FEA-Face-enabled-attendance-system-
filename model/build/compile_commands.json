@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/daksh/VeriFace/model/build",
-  "command": "/usr/bin/x86_64-linux-gnu-g++-7  -DAT_PARALLEL_OPENMP=1 -D_THP_CORE -I/home/daksh/VeriFace/model/include -isystem /usr/local/include -isystem /usr/local/include/torch/csrc/api/include -isystem /usr/local/cuda-11.0/include  -g   -D_GLIBCXX_USE_CXX11_ABI=0 -std=gnu++14 -o CMakeFiles/model.dir/main.cpp.o -c /home/daksh/VeriFace/model/main.cpp",
-  "file": "/home/daksh/VeriFace/model/main.cpp"
-}
-]
