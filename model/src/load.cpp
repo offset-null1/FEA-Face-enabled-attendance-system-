@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-namespace load{
+namespace loader{
 
     namespace fs = std::experimental::filesystem;
 
@@ -13,6 +13,7 @@ namespace load{
 
         cv::Mat data;
         if( file_name.find(".h5", file_name.length()-3) ){
+            
             if(!file_name.find('/',0))
                 file_name = fs::absolute(file_name); 
 
@@ -26,8 +27,10 @@ namespace load{
         return data;
     }
 
-    torch::Tensor data_toTensor(cv::Mat&& data){ //need to check for dataset dim
+    torch::Tensor data_toTensor(std::string&& file_name, const std::string& parent_name, const std::string& dataset_name){ //need to check for dataset dim
         
+        cv::Mat data = load_HDF5(std::string&& file_name, const std::string& parent_name, const std::string& dataset_name);
+
         if(!(data[0].rows == data[0].cols == 224))
             cv::resize(img_data, img_data, cv::Size(224,224), cv::INTER_CUBIC);
         
@@ -37,19 +40,15 @@ namespace load{
         return img_tensor;
     }
 
-    torch::Tensor label_toTensor(cv::Mat&& data ){ //will throw runtime err if cond not true, needs log
+    torch::Tensor label_toTensor(std::string&& file_name, const std::string& parent_name, const std::string& dataset_name){ //will throw runtime err if cond not true, needs log
 
+        cv::Mat data = load_HDF5(std::string&& file_name, const std::string& parent_name, const std::string& dataset_name);
+        
         if(data.dims == 1)
             torch::Tensor labels = torch::full({1}, data);
 
         return labels;
     }
 
-}
 
-
-int main(){
-
-    
-    return 0;
 }
