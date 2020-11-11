@@ -1,6 +1,5 @@
-import pickle
 import os
-import pickle
+import h5py
 import logging,sys
 
 fileName = sys.argv[0]
@@ -27,7 +26,7 @@ logging.basicConfig(
     level=logging.DEBUG
 )
 
-PATH = os.path.join(os.getcwd(),'embeddings_store')
+PATH = os.path.join(os.getcwd(),'hdf5_dataset')
 
 class Storage:
     def __init__(self,PATH=None,branch=None,sem=None):
@@ -40,20 +39,25 @@ class Storage:
             self.PATH = os.path.join(self.PATH,self.sem)
 
     def read_bytes(self):
-        if os.path.isabs(self.PATH) and self.PATH.endswith('.png'):
-            with open(self.PATH,'rb') as f:
-                data=pickle.load(f)
-            return zip(data, self.PATH.split('.')[-2])
+        if os.path.isabs(self.PATH) and self.PATH.endswith('.hdf5'):
+            
+            with h5py.File(self.PATH,'rb') as f:
+                dataset =  f[self.PATH]
+            return zip(dataset, self.PATH.split('.')[-2])
+        
         else:
             logging.critical(f' Absolute FILE path must be given.')
             logging.critical(f' Skipping read for: {self.PATH}')
             
+    
     def write_bytes(self,data=None,usn=None):
+        
         if os.path.isabs(self.PATH):
-            if not os.path.exists(self.PATH):
-                os.makedirs(self.PATH)
-            p = os.path.join(self.PATH,f'{usn}.pickle')
-            with open(p,'wb') as f:
-                pickle.dump(data,f)
+        
+            with h5py.File('usn.hdf5','wb') as f:
+                g_head, d_tail = os.path.split(self.PATH)
+                g = f.create_group(os.path.split(g_head))
+                g.create_dataset(d_tail, data=data)
+            
             logging.info(f' Dumped image for the usn:{usn} of branch: {self.branch} of sem {self.sem}')
-            return p
+            
