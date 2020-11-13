@@ -18,9 +18,10 @@ extern "C"{
 
             private:
                 torch::Tensor images, labels;
+                size_t batch_size;
 
             public:
-                loadDataset(std::string&& file_name, const std::string& parent_name, const std::string& image_dataset, const std::string& label_dataset) {
+                loadDataset(std::string&& file_name, const std::string& parent_name, const std::string& image_dataset, const std::string& label_dataset,size_t batch_size):batch_size(batch_size) {
 
                    images = loader::data_toTensor(std::string&& file_name, const std::string& parent_name, const std::string& image_dataset);
                    labels = loader::label_toTensor(std::string&& file_name, const std::string& parent_name, const std::string& label_dataset);
@@ -34,6 +35,10 @@ extern "C"{
 
                 torch::optional<size_t> size() const override {
                     return labels.size();
+                }
+
+                torch::Tensor get_batch(){
+                    
                 }
 
         };
