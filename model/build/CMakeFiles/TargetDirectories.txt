@@ -1,3 +1,0 @@
-/home/daksh/VeriFace/model/build/CMakeFiles/rebuild_cache.dir
-/home/daksh/VeriFace/model/build/CMakeFiles/edit_cache.dir
-/home/daksh/VeriFace/model/build/CMakeFiles/model.dir
