@@ -27,8 +27,8 @@ namespace loss{
 
         int64_t N;
         int64_t M; 
-        float s; 
-        float m;
+        float s = 30; 
+        float m = 0.5;
         float cos_m;
         float cos_comp;
         float sin_m;
