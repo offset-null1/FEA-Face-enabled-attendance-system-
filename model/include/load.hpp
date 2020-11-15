@@ -4,6 +4,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/hdf.hpp>
 #include <torch/torch.h>
+#include <tuple>
 
 #ifdef __cplusplus
 extern "C"{
@@ -19,12 +20,13 @@ extern "C"{
             private:
                 torch::Tensor images, labels;
                 size_t batch_size;
+                int16_t counter = 0;
 
             public:
-                loadDataset(std::string&& file_name, const std::string& parent_name, const std::string& image_dataset, const std::string& label_dataset,size_t batch_size):batch_size(batch_size) {
+                loadDataset(std::string&& dataset_path, std::string&& label_path, size_t batch_size):batch_size(batch_size) {
 
-                   images = loader::data_toTensor(std::string&& file_name, const std::string& parent_name, const std::string& image_dataset);
-                   labels = loader::label_toTensor(std::string&& file_name, const std::string& parent_name, const std::string& label_dataset);
+                   images = loader::data_toTensor(std::move(dataset_path));
+                   labels = loader::label_toTensor(std::move(label_path));
 
                 }
 
@@ -35,10 +37,6 @@ extern "C"{
 
                 torch::optional<size_t> size() const override {
                     return labels.size();
-                }
-
-                torch::Tensor get_batch(){
-                    
                 }
 
         };
