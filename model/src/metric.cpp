@@ -6,11 +6,13 @@
 #include "../include/loss.h"
 
 
-using namespace torch;
-using namespace std;
-namespace DT = data::transforms;
+namespace metric{
 
-loss::arcMarginImpl::arcMarginImpl(int64_t N, int64_t M, float s, float m, bool easy_margin) : N(N),M(M),s(s),m(m),easy_margin(easy_margin),fc(torch::nn::LinearOptions(N,M).with_bias(false))
+    using namespace torch;
+    using namespace std;
+    namespace DT = data::transforms;
+
+    arcMarginImpl::arcMarginImpl(int64_t N, int64_t M, float s, float m, bool easy_margin) : N(N),M(M),s(s),m(m),easy_margin(easy_margin),fc(torch::nn::LinearOptions(N,M).with_bias(false))
     {
        register_module("fc",fc);
        Tensor weight = register_parameter( "weight", torch::ones((N, M), torch::TensorOptions(torch::kFloat16).requires_grad(true)) );
@@ -23,7 +25,7 @@ loss::arcMarginImpl::arcMarginImpl(int64_t N, int64_t M, float s, float m, bool 
     }
 
 
-torch::Tensor loss::arcMarginImpl::forward(const Tensor& input, const Tensor& label)
+    torch::Tensor loss::arcMarginImpl::forward(const Tensor& input, const Tensor& label)
     {
        
         auto norm_in = ( input - input.mean() ) / input.std();
@@ -45,3 +47,6 @@ torch::Tensor loss::arcMarginImpl::forward(const Tensor& input, const Tensor& la
         
         return output;
     }
+
+}
+

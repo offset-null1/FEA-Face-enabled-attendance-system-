@@ -7,7 +7,7 @@
 extern "C"{
 #endif // __cplusplus
 
-namespace loss{
+namespace metric{
 
     struct arcMarginImpl : torch::nn::Module{
 

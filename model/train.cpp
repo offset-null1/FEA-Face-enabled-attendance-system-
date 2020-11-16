@@ -22,29 +22,29 @@ torch::device get_device(){
     }
 }
 
-void train_net(loader::loadDataset& data_loader, torch::jit::module net, torch::optim::Optimizer& optimizer ,torch::nn::Linear fc, const int epochs, bool use_default_loss, bool test){
+void train_net(loader::loadDataset& data_loader, torch::jit::module net, torch::optim::Optimizer& optimizer ,torch::nn::Linear fc, const int epochs, size_t dataset_size){
 
     auto start = std::chrono::system_clock::now();
 
     std::vector<float> acc_history;
     float best_acc = 0.0f;
+    int batch_index();
 
     torch::device device_ = get_device();
 
     for(int i=0 ; i<epochs ; ++i){
         std::cout << "Epoch" << i+1 <<'/'<< epochs << '\n\n';
-
-        if(test){
-            net.eval();
-        }
-        else{
-            net.train();
-        }
-
+    
+        net.train();
+        
         float running_loss = 0.0f;
         int16_t running_corrects = 0;
 
         for(auto& batch : *data_loader){
+            
+            auto data = batch.data;
+            auto labels = batch.labels.squeeze();
+            
             data = data.to(device_);
             labels = labels.to(device_);
 
@@ -54,16 +54,22 @@ void train_net(loader::loadDataset& data_loader, torch::jit::module net, torch::
 
             auto output = net.forward(input).toTensor();
             output = output.view({output.size(0), -1});
+            output = lin(output); //linear layer
 
-            auto loss = torch::nll_loss(torch::binary_cross_entropy_with_logits(output, 1), labels);
+            auto loss = torch::binary_cross_entropy_with_logits(output, labels);
             loss.backward();
             optimizer.step();
 
-            
+            auto acc = output.argmax(1).eq(labels).sum();
+
+            running_corrects = acc.template item<float>(); 
+            running_loss = loss.template item<float>();
+
+            batch_index +=1;            
 
         }
-        
-
+        running_loss = running_loss/float(batch_index); //avg
+        std::cout << "Epoch" << i << ", " << "Accuracy: " << running_corrects/dataset_size << ", " << running_loss << '\n';
     }
 
 
