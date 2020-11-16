@@ -19,8 +19,6 @@ extern "C"{
 
             private:
                 torch::Tensor images, labels;
-                size_t batch_size;
-                int16_t counter = 0;
 
             public:
                 loadDataset(std::string&& dataset_path, std::string&& label_path, size_t batch_size):batch_size(batch_size) {
