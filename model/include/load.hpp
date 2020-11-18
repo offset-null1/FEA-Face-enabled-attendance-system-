@@ -18,19 +18,19 @@ extern "C"{
         class loadDataset : public torch::data::dataset<loadDataset> {
 
             private:
-                torch::Tensor images, labels;
+                torch::Tensor data, labels;
 
             public:
-                loadDataset(std::string&& dataset_path, std::string&& label_path, size_t batch_size):batch_size(batch_size) {
+                loadDataset(std::string&& dataset_path, std::string&& label_path, size_t batch_size) {
 
-                   images = loader::data_toTensor(std::move(dataset_path));
+                   data = loader::data_toTensor(std::move(dataset_path));
                    labels = loader::label_toTensor(std::move(label_path));
 
                 }
 
                 torch::dataset::Example<> get(size_t index) override {
 
-                    return { images.at(index).clone(), labels.at(index).clone() };
+                    return { data.at(index).clone(), labels.at(index).clone() };
                 }
 
                 torch::optional<size_t> size() const override {

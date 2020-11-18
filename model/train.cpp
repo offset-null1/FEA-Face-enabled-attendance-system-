@@ -7,9 +7,6 @@
 #include "include/load.hpp"
 #include "include/loss.h"
 
-#define s 0.00
-#define m 0.00
-
 torch::device get_device(){
     
     if(torch::cuda::is_available()){
@@ -22,7 +19,7 @@ torch::device get_device(){
     }
 }
 
-void train_net(loader::loadDataset& data_loader, torch::jit::module net, torch::optim::Optimizer& optimizer ,torch::nn::Linear fc, const int epochs, size_t dataset_size){
+void train_net(loader::loadDataset& data_loader, torch::jit::module net, torch::optim::Optimizer& optimizer ,  ,torch::nn::Linear lin, const int epochs, size_t dataset_size){
 
     auto start = std::chrono::system_clock::now();
 
@@ -77,4 +74,37 @@ void train_net(loader::loadDataset& data_loader, torch::jit::module net, torch::
 
     std::chrono::duration<double> difference = end - start;
     std::cout << "Time consumed for training :" << difference.count() << '\n\n'; 
+}
+
+
+void test(loader::loadDataset& loader, torch::jit::script::Module net, torch::nn::Linear lin, size_t dataset_size){
+
+    net.eval();
+
+    float running_loss = 0.0f, running_accuracy = 0.0f;
+
+    for(const auto& batch : *loader){
+
+        auto data = batch.data;
+        auto labels = batch.labels.squeeze();
+
+        torch::data device_ = get_device();
+        data.to(device_);
+        labels.to(device_);
+
+        std::vector<torch::jit::IValue> input;
+        input.push_back(data);
+
+        torch::Tensor output = net.forward(input).toTensor();
+        output = output.view({output.size(0), -1});
+        output = lin(output);
+
+        auto loss = torch::binary_cross_entropy_with_logits(output, labels);
+
+        auto acc = output.argmax(1).eq(labels).sum();
+        running_loss = loss.template item<float>(); 
+        running_accuracy = acc.template item<float>();
+
+    }
+    std::cout << "Test loss:" << running_loss/dataset_size << ", Accuracy:" << running_accuracy/dataset_size << '\n';
 }
