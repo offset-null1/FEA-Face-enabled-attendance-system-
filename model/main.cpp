@@ -7,6 +7,9 @@
 
 int main(int argc, char const *argv[])
 {
+    if(argc){
+        std::cout<<*argv;
+    }
    
     return 0;
 }
