@@ -1,21 +1,25 @@
 #include <experimental/filesystem>
 #include <opencv2/core.hpp>
 #include <opencv2/hdf.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <torch/torch.h>
 #include <iostream>
 #include <string>
+#include "load.hpp"
 
-static std::vector<std::string> split_path(std::string&& path, std::string&& delimiter){
+namespace fs = std::experimental::filesystem;
+
+std::vector<std::string> split_path(std::string&& path, const std::string& delimiter){
     std::string token;
     std::vector<std::string> p;
 
     if(!path.find('/',0))
-        path = fs::absolute(file_name); 
+        path = fs::absolute(path); 
 
-    while( (pos = s.find(delimiter)) != std::string::npos){
-        token = s.substr(0,pos);
+    while( auto pos = path.find(delimiter) != std::string::npos ){
+        token = path.substr(0,pos);
         p.push_back(token);
-        s.erase(0,pos+delimiter.length());
+        path.erase(0,pos+delimiter.length());
     }
     return p;
 }
@@ -29,10 +33,10 @@ namespace loader{
         std::vector<std::string> file_name = split_path(std::move(hdf5_path), "/");
         if( file_name[file_name.size()-1].find(".h5") ){
             
-            cv::Ptr<hdf::HDF5> h5io = cv::hdf::open(file_name);
+            cv::Ptr<cv::hdf::HDF5> h5io = cv::hdf::open(hdf5_path);
 
-            if(h5io->hlexists(parent_name) && h5io->hlexists(dataset_name))
-                h5io->dsread(data, dataset_name);
+            if(h5io->hlexists(file_name[1]) && h5io->hlexists(file_name[2]))
+                h5io->dsread(data, file_name[2]);
 
             h5io->close();
         }
@@ -41,26 +45,26 @@ namespace loader{
 
     torch::Tensor data_toTensor(std::string&& file_path){ //need to check for dataset dim
         
-        cv::Mat data = load_HDF5(std::move(file_path));
+        cv::Mat img_data = load_HDF5(std::move(file_path));
 
-        if(!(data[0].rows == data[0].cols == 224))
+        if(!(img_data.at<cv::Vec3b>(0).rows == img_data.at<cv::Vec3b>(0).cols == 224))
             cv::resize(img_data, img_data, cv::Size(224,224), cv::INTER_CUBIC);
         
-        torch::Tensor tensor_tensor = torch::from_blob(img_data.data, {img_data.rows, img_data.cols, img_data.channels, img_data.size(img_data.dims - 1) }, torch::kBytes);
-        img_tensor = img.tensor.permute({3,2,0,1});
+        torch::Tensor img_tensor = torch::from_blob(img_data.data, {img_data.size[img_data.dims-4], img_data.size[img_data.dims-3], img_data.size[img_data.dims-2], img_data.size[img_data.dims-1] }, torch::kByte);
+        img_tensor = img_tensor.permute({3,2,0,1});
 
         return img_tensor;
     }
 
-    torch::Tensor label_toTensor(std::string&& file_path){ //will throw runtime err if cond not true, needs log
+    torch::Tensor label_toTensor(std::string&& file_path){
 
-        cv::Mat data = load_HDF5(std::move(file_path));
+        cv::Mat label_data = load_HDF5(std::move(file_path));
         
-        if(data.dims == 1)
-            torch::Tensor labels = torch::full({1}, data);
+        // if(data.dims == 1)
+        torch::Tensor label_tensor = torch::from_blob(label_data.data, {label_data.cols}, torch::kByte);
 
-        return labels;
+        return label_tensor;
     }
 
 
-}
+}//loader
