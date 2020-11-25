@@ -3,7 +3,7 @@
 #include <torch/torch.h>
 #include <iostream>
 #include <math.h>
-#include "../include/loss.h"
+#include "metric.hpp"
 
 
 namespace metric{
@@ -25,17 +25,17 @@ namespace metric{
     }
 
 
-    torch::Tensor loss::arcMarginImpl::forward(const Tensor& input, const Tensor& label)
+    torch::Tensor arcMarginImpl::forward(const Tensor& input, const Tensor& label)
     {
        
         auto norm_in = ( input - input.mean() ) / input.std();
-        auto norm_w = ( weight - weight.mean() ) / weight.std();
+        auto norm_w = ( weight - this->weight.mean() ) / this->weight.std();
         
-        auto cosine =  fc->forward(norm_in.view({norm_in.size(0),this->N})); //cos(b)
+        auto cosine =  this->fc->forward(norm_in.view({norm_in.size(0),this->N})); //cos(b)
         auto sine = torch::sqrt( (1.0 - at::pow(cosine, 2)) );
-        auto phi = cosine * cos_m - sine * sin_m; //cos(a+b)
+        auto phi = cosine * this->cos_m - sine * sin_m; //cos(a+b)
 
-        if(easy_margin){
+        if(this->easy_margin){
             phi = at::where(cosine>0, phi, cosine);
         }else{
             phi = at::where(cosine>cos_comp, phi, (cosine - mm));

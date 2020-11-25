@@ -4,22 +4,22 @@
 #include <chrono>
 #include <vector>
 #include <string> 
-#include "include/load.hpp"
-#include "include/loss.h"
+#include "load.hpp"
+#include "metric.hpp"
 
 torch::device get_device(){
     
     if(torch::cuda::is_available()){
         std::cout<< "Using CUDA" <<'\n';
-        device_ =  torch::kCUDA; //returns 1
+        return torch::kCUDA; //returns 1
     }
     else{
         std::cout<< "Using CPU" <<'\n';
-        device_ = torch::kCPU; //returns 0
+        return torch::kCPU; //returns 0
     }
 }
 
-void train_net(loader::loadDataset& data_loader, torch::jit::module net, torch::optim::Optimizer& optimizer ,  ,torch::nn::Linear lin, const int epochs, size_t dataset_size){
+void train_net(loader::loadDataset& data_loader, torch::jit::script::Module net, torch::optim::Optimizer& optimizer ,  ,torch::nn::Linear lin, const int epochs, size_t dataset_size){
 
     auto start = std::chrono::system_clock::now();
 
@@ -30,7 +30,7 @@ void train_net(loader::loadDataset& data_loader, torch::jit::module net, torch::
     torch::device device_ = get_device();
 
     for(int i=0 ; i<epochs ; ++i){
-        std::cout << "Epoch" << i+1 <<'/'<< epochs << '\n\n';
+        std::cout << "Epoch" << i+1 <<'/'<< epochs << "\n\n";
     
         net.train();
         
@@ -65,7 +65,7 @@ void train_net(loader::loadDataset& data_loader, torch::jit::module net, torch::
             batch_index +=1;            
 
         }
-        running_loss = running_loss/float(batch_index); //avg
+        running_loss = running_loss/(float)(batch_index); //avg
         std::cout << "Epoch" << i << ", " << "Accuracy: " << running_corrects/dataset_size << ", " << running_loss << '\n';
     }
 
@@ -73,7 +73,7 @@ void train_net(loader::loadDataset& data_loader, torch::jit::module net, torch::
     auto end = std::chrono::system_clock::now();
 
     std::chrono::duration<double> difference = end - start;
-    std::cout << "Time consumed for training :" << difference.count() << '\n\n'; 
+    std::cout << "Time consumed for training :" << difference.count() << "\n\n"; 
 }
 
 
@@ -88,7 +88,7 @@ void test(loader::loadDataset& loader, torch::jit::script::Module net, torch::nn
         auto data = batch.data;
         auto labels = batch.labels.squeeze();
 
-        torch::data device_ = get_device();
+        torch::device device_ = get_device();
         data.to(device_);
         labels.to(device_);
 
