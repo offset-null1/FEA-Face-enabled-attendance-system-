@@ -1,0 +1,99 @@
+
+{% extends "navbar.html" %}
+    {% block joinClass %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script async src="https://docs.opencv.org/master/opencv.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script async src="https://docs.opencv.org/master/opencv.js" type="text/javascript"></script>    
+    
+    <div class="camera">
+        <video id="video">Video stream not available.</video>
+        <button id="startbutton">Take photo</button>
+    </div>
+    <canvas id="canvas">
+    </canvas>
+    <div class="output">
+      <img id="photo" alt="The screen capture will appear in this box.">
+    </div>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+        <script>
+            var socket = io('http://localhost:5000',{
+                              transportOptions: {
+                                polling: {
+                                  extraHeaders: {
+                                    'Access-Control-Allow-Origin': '*'
+                                  }
+                                }
+                              }
+                            });
+
+                var socket = io("http://localhost:5000");
+        
+                socket.on('connect response', function(msg){
+                    console.log("CONNECTED");
+                });
+            
+                const video = document.querySelector("#videoElement");
+                video.width = 500;
+                video.height = 375;
+            
+                if(navigator.mediaDevices.getUserMedia()){
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function(stream) {
+                        video.srcObject = stream;
+                        video.play();
+                    })
+                    .catch(function(err){
+                        console.log(err)
+                        console.log("Something went wrong!")
+                    })
+                
+                    let src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
+                    let data = new cv.Mat(video.height, video.width, cv.CV_8UC1);
+                    let cap = new cv.VideoCapture(video);
+                    // const FPS = 22;
+                
+                    setTimeout(()=> {
+                    
+                        cap.read(src);
+                    
+                        var type = "image/png"
+                        var data = document.getElementById("canvasOutput").toDataURL(type);
+                        data = data.replace('data:'+type+';base64,','');
+                    
+                        socket.emit('image',data);
+                    },3000);
+                
+                    socket.on('image response', function(r){
+                        let data = JSON.parse(r);
+                        if(data.length>0 && data['flag']=='success'){
+                            swal({
+                                title: `Welcome ${data['user']}!`,
+                                text: "You've been identified, you will be redirected to the class link.",
+                                icon: "success",
+                                buttons:false,
+                                timer:2000,
+                            
+                            })
+                        
+                            function pageRedirect() {
+                                window.location.replace("http://localhost:5000/");
+                            }      
+                            setTimeout("pageRedirect()", 1000);
+                        
+                        }
+                        else{
+                        
+                            function pageRedirect() {
+                                window.location.replace("http://localhost:5000/joinClass/");
+                            }      
+                            setTimeout("pageRedirect()", 1000);
+                        }
+                    
+                    });
+                
+                }
+            
+        </script>
+    {% endblock %}

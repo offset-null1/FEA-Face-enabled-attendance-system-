@@ -15,6 +15,8 @@ import sys
 import os
 import json
 
+from vizApp import app
+
 
 fileName = sys.argv[0]
 

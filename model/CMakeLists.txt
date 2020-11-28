@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project(model)
 
+
 find_package(Torch REQUIRED)
 find_package(OpenCV 4.1.0 REQUIRED)
 

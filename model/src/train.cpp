@@ -7,7 +7,7 @@
 #include "load.hpp"
 #include "metric.hpp"
 
-torch::device get_device(){
+torch::Device get_device(){
     
     if(torch::cuda::is_available()){
         std::cout<< "Using CUDA" <<'\n';
@@ -19,7 +19,8 @@ torch::device get_device(){
     }
 }
 
-void train_net(loader::loadDataset& data_loader, torch::jit::script::Module net, torch::optim::Optimizer& optimizer ,  ,torch::nn::Linear lin, const int epochs, size_t dataset_size){
+template<typename Dataloader>
+void train_net(Dataloader& data_loader, torch::jit::script::Module net, torch::optim::Optimizer& optimizer, torch::nn::Linear lin, const int epoch, size_t dataset_size){
 
     auto start = std::chrono::system_clock::now();
 
@@ -27,10 +28,10 @@ void train_net(loader::loadDataset& data_loader, torch::jit::script::Module net,
     float best_acc = 0.0f;
     int batch_index();
 
-    torch::device device_ = get_device();
+    torch::Device device_ = get_device();
 
-    for(int i=0 ; i<epochs ; ++i){
-        std::cout << "Epoch" << i+1 <<'/'<< epochs << "\n\n";
+    for(int i=0 ; i<epoch ; ++i){
+        std::cout << "Epoch" << i+1 <<'/'<< epoch << "\n\n";
     
         net.train();
         
@@ -76,8 +77,8 @@ void train_net(loader::loadDataset& data_loader, torch::jit::script::Module net,
     std::cout << "Time consumed for training :" << difference.count() << "\n\n"; 
 }
 
-
-void test(loader::loadDataset& loader, torch::jit::script::Module net, torch::nn::Linear lin, size_t dataset_size){
+template<typename Dataloader>
+void test(Dataloader& loader, torch::jit::script::Module net, torch::nn::Linear lin, size_t dataset_size){
 
     net.eval();
 
@@ -88,7 +89,7 @@ void test(loader::loadDataset& loader, torch::jit::script::Module net, torch::nn
         auto data = batch.data;
         auto labels = batch.labels.squeeze();
 
-        torch::device device_ = get_device();
+        torch::Device device_ = get_device();
         data.to(device_);
         labels.to(device_);
 
