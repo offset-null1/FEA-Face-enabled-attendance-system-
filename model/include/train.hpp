@@ -5,13 +5,13 @@
 #include <torch/script.h>
 #include "load.hpp"
 
-#ifdef __cplusplus
-extern "C"{
-#endif //__cplusplus
+// #ifdef __cplusplus
+// extern "C"{
+// #endif //__cplusplus
+    template<typename Dataloader>
+    void train_net(Dataloader& data_loader, torch::jit::script::Module net, torch::optim::Optimizer& optimizer, torch::nn::Linear lin,const int epochs, size_t dataset_size);
 
-    void train_net(loader::loadDataset& data_loader, torch::jit::script::Module net, torch::nn::Linear fc, const int epochs, bool use_default_loss, bool test);
-
-#ifdef __cplusplus
-}
-#endif // __cplusplus
+// #ifdef __cplusplus
+// }
+// #endif // __cplusplus
 #endif // !__TRAIN__
