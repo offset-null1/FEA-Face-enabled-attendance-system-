@@ -5,8 +5,9 @@
         <a class="navbar-brand" href="#">
           <h3>
             FEA
-          <small class="text-muted">Face Enabled Attendance System</small>
         </h3></a>
+        <small class="text-muted">Face Enabled Attendance System</small>
+
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="true" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -46,20 +47,70 @@
           </form>
         </div>
       </nav>
+    <!-- <body>
+      <section class="banner" id="sec">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='base.css') }}">
+    
+          <aside>
+            <figure>
+              <div id="avatar"></div>
+              <figcaption>FEA</figcaption>
+            </figure>
+            <img src="{{url_for('static', filename='images/menu.svg')}}" />
+            <small class="text-muted">Face Enabled Attendance System</small>
+          </aside>
+         <main>
+              
+            <img id="footer" src="{{url_for('static', filename='images/card-wave.svg')}}" /> -->
+         <!-- </main>
+
+      <nav>
+        <ul >
+            <li><a href="{{ url_for('base') }}">Home</a></li>
+            <li><a href="{{ url_for('attendance') }} ">Attendance</a></li>
+            <li><a href="{{ url_for('upload') }}">Upload</a></li>
+            <li><a href="{{ url_for('form') }}">Student Registration</a></li>
+            <li><a href="#">Sign up</a></li>
+            <li><a href="#">Login</a></li>
+            
+        </ul>
+      </nav>  -->
       
-      <div>
-         {% block form %}{% endblock %}
-      </div>
-      
-      <div>
-        {% block attendance %}{% endblock %}
-      </div>
-      <div>
-        {% block upload %}{% endblock %}
-      </div>
-      <div>
-        {% block detect %}{% endblock %}
-      </div>
+
+
+          <div>
+             {% block form %}{% endblock %}
+          </div>
+
+          <div>
+            {% block attendance %}{% endblock %}
+          </div>
+          <div>
+            {% block upload %}{% endblock %}
+          </div>
+          <div>
+            {% block detect %}{% endblock %}
+          </div>
+      <!-- </section>   -->
+    <!-- </body> -->
+
+
+    <script>
+        (function () {
+            var menu = document.querySelector('ul'),
+            menulink = document.querySelector('button');
+            // banner = document.querySelector('body');
+
+            menulink.addEventListener('click', function(e){
+                // menulink.classList.toggle('rotate');
+                menu.classList.toggle('active');
+                // banner.classList.toggle('active');
+                e.preventDefault();
+            })
+        })();
+
+              
+    </script>
   
 {% endblock %}
 

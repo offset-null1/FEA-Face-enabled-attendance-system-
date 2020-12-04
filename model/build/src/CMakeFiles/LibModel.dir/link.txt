@@ -1,0 +1,2 @@
+/usr/bin/ar qc libLibModel.a CMakeFiles/LibModel.dir/load.cpp.o CMakeFiles/LibModel.dir/metric.cpp.o CMakeFiles/LibModel.dir/train.cpp.o
+/usr/bin/ranlib libLibModel.a

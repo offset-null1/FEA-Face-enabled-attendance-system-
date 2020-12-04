@@ -2,46 +2,51 @@
 
 {% block form %}
 
-<div class="jumbotron" style="margin-top:20px;padding:20px;">    
-  <p><span id="errorMsg"></span></p>  
 
-  <div class="row">    
-      <div class="col-lg-6" >  
-          <div class="text-center">
-              <h1 style="text-align:center">    
-                  Live Training  
-              </h1> 
-          </div>
-             
-          <h4>    
-              Webcam feed  
-          </h4>  
-          
-          <p>
-              <button class="btn btn-primary" id="btnCapture" style="text-align:center" onclick="capture();">Click to capture</button>    
-          </p>
-          <video id="video" playsinline autoplay></video>    
-      </div>    
-  
-      <div class="col-lg-6" class="text-center">    
-          <h4>    
-              Captured image from Webcam    
-          </h4>   
-          <p> 
-    
-              <!-- <input type="button" class="btn btn-primary" id="canvas" name="btnSave" value="Upload to server" />   -->
-
-          </p>   
-          <canvas style="border:solid 1px  rgb(121, 5, 121); background-color:rgb(19, 1, 1);" id="canvas" width="600" height="500"></canvas>    
-      </div>    
-  </div> 
-  <p>
-      <button type="button" class="btn btn-danger btn-lg" style="text-align:center" onclick="redirect();">Cancel</button>
-  </p> 
- 
-</div> 
-<form action="{{ url_for('form') }}" method="post" onsubmit="post();" > 
+<form action="{{ url_for('form') }}" method="post" onsubmit="post();" style="../static/form.css" > 
   <!-- onsubmit="send();" -->
+
+  <div class="jumbotron">    
+    <p><span id="errorMsg"></span></p>  
+  
+    <div class="row">    
+        <div class="col-lg-6" >  
+            <div class="text-center">
+                <h1  style=" text-align:center">    
+                    Live Training  
+                </h1> 
+            </div>
+               
+            <h4>    
+                Webcam feed  
+            </h4>  
+            
+            <p>
+                <button class="btn btn-primary" id="btnCapture" style="text-align:center" onclick="capture();">Click to capture</button>    
+            </p>
+            <video id="video" playsinline autoplay></video>    
+        </div>    
+    
+        <div class="col-lg-6" class="text-center">    
+            <h4>    
+                Captured image from Webcam    
+            </h4>   
+            <p> 
+      
+                <!-- <input type="button" class="btn btn-primary" id="canvas" name="btnSave" value="Upload to server" />   -->
+  
+            </p>   
+            <canvas style="border:solid 1px  rgb(121, 5, 121); background-color:rgb(19, 1, 1);" id="canvas" width="600" height="500"></canvas>    
+        </div>    
+    </div> 
+    <p>
+        <button type="button" class="btn btn-danger btn-lg" style="text-align:center" onclick="redirect();">Cancel</button>
+    </p> 
+   
+  </div> 
+
+
+  
     <fieldset>
       <legend>REGISTRATION </legend>
       <input id="img" name="img" type="hidden" value="">
@@ -107,8 +112,64 @@
     
 </form>
 
+<<<<<<< HEAD
 <script src="src/form.js"></script>
        
+=======
+<script>
+      
+      if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true,
+                audio: false,  
+                video: {  
+                    width: 600, height: 500  
+          }   })
+            .then(function (stream) {                                                    
+                video.srcObject = stream;
+                video.play();
+             
+            })
+            .catch(function (error) {
+                console.log(error)
+                console.log("Something went wrong!");
+            })
+        }
+      
+      
+        
+      var video = document.querySelector("#video"); 
+      var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+      imgArray = []
 
+        function capture(){
+            var i=0;
+            var interval = setInterval(function(){
+                context.drawImage(video, 0, 0);  
+        
+                var url =  canvas.toDataURL('image/png');
+                var data_url=url.replace('data:image/png;base64,','');
+                imgArray.push(data_url);
+                console.log(imgArray[i]);
+                i+=1;
+                console.log(i);
+                if(i==50){
+                    clearInterval(interval);
+                }
+            },100);
+        };    
+    
+           
+    function post(){
+        document.getElementById('img').value = JSON.stringify(imgArray);
+      }
+      
+>>>>>>> 7760258... user handle
+
+    function redirect(){
+        window.location.replace("http://localhost:5000/");
+    }
+
+</script>
 
 {% endblock %}

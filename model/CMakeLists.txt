@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project(model)
 
-
+message("${CMAKE_SOURCE_DIR}")
 find_package(Torch REQUIRED)
-find_package(OpenCV 4.1.0 REQUIRED)
+find_package(OpenCV 4.1.0 REQUIRED HINTS "/usr/local/share/OpenCV")
 
-include_directories(${OpenCV_INCLUDE_DIRS})
-
+include_directories(${OpenCV_INCLUDE_DIRS} HINTS "/usr/local/include/opencv2")
+message("${OpenCV_INCLUDE_DIRS}")
 if (NOT TARGET model)
     add_subdirectory("${CMAKE_SOURCE_DIR}/src")
     list(APPEND EXTRA_LIBS LibModel)
