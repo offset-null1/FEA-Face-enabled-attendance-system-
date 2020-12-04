@@ -14,7 +14,7 @@ def init_app():
         from . import routes
 
         # Import Dash application
-        from .vizApp.dashApp import create_dashboard
+        from .dashApp import create_dashboard
         app = create_dashboard(app)
 
         return app

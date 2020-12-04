@@ -26,7 +26,7 @@ void train_net(Dataloader& data_loader, torch::jit::script::Module net, torch::o
 
     std::vector<float> acc_history;
     float best_acc = 0.0f;
-    int batch_index();
+    int batch_index;
 
     torch::Device device_ = get_device();
 

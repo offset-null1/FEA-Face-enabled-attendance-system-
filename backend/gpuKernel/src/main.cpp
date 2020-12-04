@@ -8,7 +8,7 @@ using namespace cv;
 
 int main(){
    
-    Mat in_frame = imread("/home/daksh/Downloads/jake-blucker-OJX7gIU3E6U-unsplash.jpg", IMREAD_GRAYSCALE);
+    Mat in_frame = imread("/path/to/image", IMREAD_GRAYSCALE);
     if(in_frame.empty()){
         cout<<"Empty"<<"\n";
         return 1;

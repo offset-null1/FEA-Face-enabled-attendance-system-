@@ -2,46 +2,51 @@
 
 {% block form %}
 
-<div class="jumbotron" style="margin-top:20px;padding:20px;">    
-  <p><span id="errorMsg"></span></p>  
 
-  <div class="row">    
-      <div class="col-lg-6" >  
-          <div class="text-center">
-              <h1 style="text-align:center">    
-                  Live Training  
-              </h1> 
-          </div>
-             
-          <h4>    
-              Webcam feed  
-          </h4>  
-          
-          <p>
-              <button class="btn btn-primary" id="btnCapture" style="text-align:center" onclick="capture();">Click to capture</button>    
-          </p>
-          <video id="video" playsinline autoplay></video>    
-      </div>    
-  
-      <div class="col-lg-6" class="text-center">    
-          <h4>    
-              Captured image from Webcam    
-          </h4>   
-          <p> 
-    
-              <!-- <input type="button" class="btn btn-primary" id="canvas" name="btnSave" value="Upload to server" />   -->
-
-          </p>   
-          <canvas style="border:solid 1px  rgb(121, 5, 121); background-color:rgb(19, 1, 1);" id="canvas" width="600" height="500"></canvas>    
-      </div>    
-  </div> 
-  <p>
-      <button type="button" class="btn btn-danger btn-lg" style="text-align:center" onclick="redirect();">Cancel</button>
-  </p> 
- 
-</div> 
-<form action="{{ url_for('form') }}" method="post" onsubmit="post();" > 
+<form action="{{ url_for('form') }}" method="post" onsubmit="post();" style="../static/form.css" > 
   <!-- onsubmit="send();" -->
+
+  <div class="jumbotron">    
+    <p><span id="errorMsg"></span></p>  
+  
+    <div class="row">    
+        <div class="col-lg-6" >  
+            <div class="text-center">
+                <h1  style=" text-align:center">    
+                    Live Training  
+                </h1> 
+            </div>
+               
+            <h4>    
+                Webcam feed  
+            </h4>  
+            
+            <p>
+                <button class="btn btn-primary" id="btnCapture" style="text-align:center" onclick="capture();">Click to capture</button>    
+            </p>
+            <video id="video" playsinline autoplay></video>    
+        </div>    
+    
+        <div class="col-lg-6" class="text-center">    
+            <h4>    
+                Captured image from Webcam    
+            </h4>   
+            <p> 
+      
+                <!-- <input type="button" class="btn btn-primary" id="canvas" name="btnSave" value="Upload to server" />   -->
+  
+            </p>   
+            <canvas style="border:solid 1px  rgb(121, 5, 121); background-color:rgb(19, 1, 1);" id="canvas" width="600" height="500"></canvas>    
+        </div>    
+    </div> 
+    <p>
+        <button type="button" class="btn btn-danger btn-lg" style="text-align:center" onclick="redirect();">Cancel</button>
+    </p> 
+   
+  </div> 
+
+
+  
     <fieldset>
       <legend>REGISTRATION </legend>
       <input id="img" name="img" type="hidden" value="">
@@ -107,11 +112,9 @@
     
 </form>
 
-<script src="src/form.js"></script>
-       
-<<<<<<< HEAD
-  
-        if (navigator.mediaDevices.getUserMedia) {
+<script>
+      
+      if (navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: true,
                 audio: false,  
                 video: {  
@@ -120,8 +123,6 @@
             .then(function (stream) {                                                    
                 video.srcObject = stream;
                 video.play();
-                var fr =stream.getVideoTracks()[0].getSettings().frameRate;
-                console.log('framerate:',fr);
              
             })
             .catch(function (error) {
@@ -131,8 +132,8 @@
         }
       
       
-       
-      var video = document.querySelector("#video");
+        
+      var video = document.querySelector("#video"); 
       var canvas = document.getElementById('canvas');
       var context = canvas.getContext('2d');
       imgArray = []
@@ -148,10 +149,10 @@
                 console.log(imgArray[i]);
                 i+=1;
                 console.log(i);
-                if(i==5){
+                if(i==50){
                     clearInterval(interval);
                 }
-            },1000);
+            },100);
         };    
     
            
@@ -159,8 +160,11 @@
         document.getElementById('img').value = JSON.stringify(imgArray);
       }
       
-=======
->>>>>>> bf75f09... js
 
+    function redirect(){
+        window.location.replace("http://localhost:5000/");
+    }
+
+</script>
 
 {% endblock %}

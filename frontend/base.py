@@ -15,7 +15,7 @@ import sys
 import os
 import json
 
-from vizApp import app
+# from vizApp import dashApp
 
 
 fileName = sys.argv[0]
@@ -45,7 +45,6 @@ logging.basicConfig(
 mpl_logger = logging.getLogger("__init__")
 mpl_logger.setLevel(logging.ERROR)
 EMBED_PATH = os.path.join(cwd, "students_embedding")
-
 app = Flask(__name__)
 app.secret_key=os.urandom(24)
 conn = MysqlConnector()
@@ -345,6 +344,21 @@ def get_embedding(image=None, model=None):
         logging.critical(" Make sure image is captured and streamed in proper format")
         
     
+# app.route("/viz", methods=["POST", "GET"])
+# def viz():
+    
+#     if request.method == "POST":
+#         logging.info(" POST request")
+#         usn = request.form.get("usn")
+#         project_id = request.form.get("project_id")
+#         project_marks = request.form.get("project_marks")
+#         where = f'usn = {usn}'
+#         conn = MysqlConnector()
+#         res=conn.select(tableName='students',columnName='usn',where=where)
+        
+    
+    # return render_template("viz.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
