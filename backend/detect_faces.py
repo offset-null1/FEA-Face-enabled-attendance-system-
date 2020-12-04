@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import logging
 <<<<<<< HEAD
+<<<<<<< HEAD
 import os,sys
 
 fileName = sys.argv[0]
@@ -29,6 +30,8 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S',
     level=logging.DEBUG
 )
+=======
+>>>>>>> 7760258... user handle
 =======
 >>>>>>> 7760258... user handle
 
@@ -65,10 +68,13 @@ class detector(camera):
     def detect(self):
         frame = self.getRawFrames()
 <<<<<<< HEAD
+<<<<<<< HEAD
         frame = imutils.resize(frame,width=300)
         orig = frame.copy()
         (h,w) = frame.shape[:2]
         blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300,300)), 1.0, (300,300), (104.0,177.0,123.0))
+=======
+>>>>>>> 7760258... user handle
 =======
 >>>>>>> 7760258... user handle
         
