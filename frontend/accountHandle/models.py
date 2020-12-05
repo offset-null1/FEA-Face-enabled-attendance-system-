@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 db = SQLAlchemy()
 
-class user(UserMixin ,db.Model):
+class User(UserMixin ,db.Model):
     """ An admin (teachers) cabable to view/edit reports registered students can only read 
 
         :param str email : valid email address
