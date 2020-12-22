@@ -1,11 +1,8 @@
 #!/usr/bin/python3
 from flask.helpers import flash
-from backend.alignment.align_faces import aligner
 from backend.mysqlConnector import MysqlConnector
 from flask import Flask, render_template, Response, redirect, url_for, request
-from backend.detect_faces import detector
-from backend.embedding import kernel
-from backend.alignment import align_faces
+from backend.recognize import recognize, load_known_faces, camera
 from backend.storage import Storage
 import base64
 import logging
@@ -57,7 +54,7 @@ def base():
 def gen(detector_obj):
 
     while True:
-        raw_detect, roi = detector_obj.detect()
+        raw_detect, frame = detector_obj.detect()
         yield (
             b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + raw_detect + b"\r\n"
         )
@@ -65,9 +62,9 @@ def gen(detector_obj):
 
 @app.route("/video")
 def video():
-    Detector = detector()  
+    cam = camera()
     return Response(
-        gen(Detector), mimetype="multipart/x-mixed-replace; boundary=frame" 
+        gen(recognize(cam)), mimetype="multipart/x-mixed-replace; boundary=frame" 
     )
 
 
