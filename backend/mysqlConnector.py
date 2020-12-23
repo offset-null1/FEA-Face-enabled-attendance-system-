@@ -458,6 +458,7 @@ class MysqlConnector:
             groupBy = kwargs.get("groupBy")
             having = kwargs.get("having")
             inner_join = kwargs.get("inner_join")
+            orderBy = kwargs.get("orderBy")   #recent
             if colOption and tableName:
                 query = "SELECT "
                 if colOption is "*":
@@ -468,7 +469,13 @@ class MysqlConnector:
                     tickedList = MysqlConnector.addTicks(colOption)
                     tickedCol = ",".join(tickedList)
                     query += tickedCol
-                query += " FROM " + "`" + tableName + "`"
+                query += " FROM " 
+                
+                if type(tableName) is list:
+                    query += ','.join(str(i) for i in tableName )
+                
+                elif type(tableName) is str:
+                    query+= tableName 
 
                 if where is None:
                     pass
@@ -507,6 +514,16 @@ class MysqlConnector:
                             f" Having clause should be of type str or list but give type is :{type(having)}"
                         )
                         return
+                if orderBy is None:
+                    pass
+                else:
+                    try:
+                        assert type(orderBy) is str
+                        query += "ORDER BY " + orderBy 
+                    except AssertionError as err:
+                        logging.critical(
+                            f" ORDER BY clause should be of type str but give type is :{type(orderBy)}"
+                        ) 
                 if inner_join is None:
                     pass
                 else:

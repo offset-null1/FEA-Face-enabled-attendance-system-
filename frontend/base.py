@@ -1,7 +1,8 @@
 #!/usr/bin/python3
+import re
 from flask.helpers import flash
 from backend.mysqlConnector import MysqlConnector
-from flask import Flask, render_template, Response, redirect, url_for, request
+from flask import Flask, render_template, Response, redirect, url_for, request, jsonify
 from backend.recognize import recognize, load_known_faces, camera
 from backend.storage import Storage
 import base64
@@ -11,6 +12,7 @@ import cv2
 import sys
 import os
 import json
+import face_recognition
 
 # from vizApp import dashApp
 
@@ -45,16 +47,23 @@ EMBED_PATH = os.path.join(cwd, "students_embedding")
 app = Flask(__name__)
 app.secret_key=os.urandom(24)
 conn = MysqlConnector()
+load_known_faces()
 
+
+'''
+    index
+'''
 @app.route("/")
 def base():
     return render_template("navbar.html")
 
-
-def gen(detector_obj):
+''' 
+    For video feed
+'''
+def gen(recognize):
 
     while True:
-        raw_detect, frame = detector_obj.detect()
+        raw_detect, _ = recognize()
         yield (
             b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + raw_detect + b"\r\n"
         )
@@ -68,16 +77,54 @@ def video():
     )
 
 
-@app.route("/attendance")
+@app.route("/attendance", methods=['POST'])
 def attendance():
+    conn = MysqlConnector()
+    if request.method == 'POST':
+        json_data = request.get_json()
+        usn_present_today = conn.select(columnName=['students.fname', 'attendance.usn'] , tableName=['attendance', 'students'], where=f"attendance.date = '{json_data['date']}' AND attendance.usn = f'{json_data['usn']}' ")
+        
+        if usn_present_today:
+            update_usn = conn.update(tableName='attendance', column={'logout': f" '{json_data['hour']}' "}, where = f"name = '{json_data['name']}'")
+        else:
+            insert_usn = conn.insert(execute=True, tableName='attendance', column={'usn': f" '{json_data['usn']}' ", 'date': f" '{json_data['date']}' ", 'login': f" '{json_data['hour']}' "})
+        
+        #return details along
+        return jsonify(json_data) , render_template("video_feed.html")
+    conn.closeConnection()
+        
     return render_template("video_feed.html")
 
-
+''' 
+To display last 5 attendees 
+'''
+@app.route("/get_5_last_entries", methods=['GET'])
+def get_5_last_entries():
+    answers_to_send = {}
+    conn = MysqlConnector()
+    
+    last_entries = conn.select(columnName = ['usn', 'fname'] , tableName = 'students', orderBy = 'usn DESC LIMIT 5')
+    if last_entries:
+        for index,person in enumerate(last_entries):
+            answers_to_send[index] = {}
+            for i,details in person:
+                answers_to_send[index][i] = str(details)
+    else:
+        answers_to_send = {'error': 'DB is not connected or empty'}
+    if conn:
+        conn.closeConnection()
+    return jsonify(answers_to_send)
+                
+'''
+To upload students details and academic records
+'''
 @app.route("/upload")
 def upload():
     return render_template("upload/upload.html")
 
-
+'''
+Uploading marks
+'''
 @app.route("/marks", methods=["POST", "GET"])
 def marks():
     if request.method == "POST":
@@ -128,7 +175,9 @@ def marks():
     else:
         return render_template("upload/marks.html")
 
-
+'''
+Uploading assignment marks
+'''
 @app.route("/assign", methods=["POST", "GET"])
 def assign():
     if request.method == "POST":
@@ -159,7 +208,9 @@ def assign():
     else:
         return render_template("upload/assign.html")
 
-
+'''
+Uploading internal assessment marks
+'''
 @app.route("/ia", methods=["POST", "GET"])
 def ia():
     if request.method == "POST":
@@ -190,7 +241,9 @@ def ia():
     else:
         return render_template("upload/ia.html")
 
-
+'''
+Uploading project marks
+'''
 @app.route("/project", methods=["POST", "GET"])
 def project():
     if request.method == "POST":
@@ -224,7 +277,9 @@ def project():
     else:
         return render_template("upload/project.html")
 
-
+'''
+Lab marks
+'''
 @app.route("/lab", methods=["POST", "GET"])
 def lab():
     if request.method == "POST":
@@ -254,7 +309,9 @@ def lab():
     else:
         return render_template("upload/lab.html")
 
-
+'''
+For student registration
+'''
 @app.route("/form", methods=["POST", "GET"])
 def form():
     print("Running /form from", request.remote_addr)
@@ -275,14 +332,23 @@ def form():
             logging.info(f' Received image set length: {len(img_b64_list)}')
 
             embeddings=[]
-            model = kernel.load_model()
             for img in img_b64_list:
                 np_img = decode(img_data=img)
                 # cv2.imshow('img',np_img)
                 # cv2.waitKey(0)
+<<<<<<< HEAD
                 align_img = aligner(np_img)
                 embeddings.append(get_embedding(align_img, model=model))
        
+=======
+                face_picture = face_recognition.load_image_file(np_img)
+                face_locations = face_recognition.face_locations(face_picture)
+                face_encodings = face_recognition.face_encodings(face_picture,face_locations)
+                embeddings.append(face_encodings)
+        
+            b = branch.split(" ")[0]
+            print(b)
+>>>>>>> c93aa4b... attendance
             store = Storage(branch=branch.split(" ")[0], sem=semester)
             file = store.write_bytes(data=embeddings, usn=usn)
 
@@ -313,7 +379,9 @@ def form():
     else:
         return render_template("form.html")
 
-
+'''
+Used by form to decode received student image via post method
+'''
 def decode(img_data=None):
     # img_data = re.sub('^data:image/png;base64,','',img_b64)
     byte_str = base64.b64decode(img_data)
@@ -323,22 +391,6 @@ def decode(img_data=None):
         np_img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
     return np_img
 
-
-def get_embedding(image=None, model=None):
-    if image.any():
-        logging.info(" Aligning..")
-        align_img = align_faces.aligner(image)
-        cv2.imwrite("orig.png", image)
-        cv2.imwrite("align.png", align_img)
-        logging.info(f"Alignment successful shape : {align_img.shape}")
-        logging.info(" Network init and calling")
-
-        model = kernel.load_model()
-        return kernel.embedding(align_img, model)
-    else:
-        logging.critical(" Make sure image is captured and streamed in proper format")
-        
-    
 # app.route("/viz", methods=["POST", "GET"])
 # def viz():
     
