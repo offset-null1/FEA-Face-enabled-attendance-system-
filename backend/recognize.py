@@ -10,7 +10,9 @@ import requests
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-
+'''
+Camera class to access system webcam
+'''
 class camera:
     def __init__(self, source=None):
         try:
@@ -35,10 +37,12 @@ class camera:
             logger.warning(" VideoCapture source is not opened.")
             logger.critical(" Returning None")
             return
-
+'''
+Loading all known registered students 
+'''
 def load_known_faces():
     known_face_encodings = []
-    known_face_names = []
+    known_face_usn = []
     known_faces_filenames = []
 
     for(dirpath, dirnames, filenames) in os.walk('../images'):
@@ -47,19 +51,22 @@ def load_known_faces():
 
     for filename in known_faces_filenames:
         face  = face_recognition.load_image_file('../images' + filename)
-        known_face_names.append(re.sub("[0-9]",'',filename[:-4]))
+        known_face_usn.append(re.sub("[0-9]",'',filename[:-4]))
         known_face_encodings.append(face_recognition.face_encodings(face)[0])
 
-    return known_face_encodings,known_face_names,known_faces_filenames
+    return known_face_encodings,known_face_usn,known_faces_filenames
     
-def recognize(cam, known_face_encodings, known_face_names):
+'''
+Used for the live attendance
+'''
+def recognize(cam, known_face_encodings, known_face_usn):
     frame = cam.getRawFrames()
     process_this_frame = True
     if process_this_frame and frame:
         face_locations = face_recognition.face_locations(frame)
         face_encodings = face_recognition.face_encodings(frame, face_locations)
 
-        face_names = []
+        face_usn = []
 
         json_to_export = {}
 
@@ -67,7 +74,7 @@ def recognize(cam, known_face_encodings, known_face_names):
             matches = face_recognition.compare_faces(
                 known_face_encodings, face_encoding
             )
-            name = "Unknown"
+            usn = "Unknown"
             face_distances = face_recognition.face_distance(
                 known_face_encodings, face_encoding
             )
@@ -76,8 +83,8 @@ def recognize(cam, known_face_encodings, known_face_names):
             _, jpg = cv2.imencode(".png", frame)
             
             if matches[best_match_index]:
-                name = known_face_names[best_match_index]
-                json_to_export["name"] = name
+                name = known_face_usn[best_match_index]
+                json_to_export["usn"] = usn
                 json_to_export[
                     "hour"
                 ] = f"{time.localtime().tm_hour}:{time.localtime().tm_min}"
@@ -90,10 +97,10 @@ def recognize(cam, known_face_encodings, known_face_names):
                 r = requests.post(url='http://127.0.0.1:5000/attendance', json=json_to_export)
                 logger.info("Status: ", r.status_code)
 
-            face_names.append(name)
+            face_usn.append(usn)
             process_this_frame = not process_this_frame
 
-            for (top, right, bottom, left), name in zip(face_locations, face_names):
+            for (top, right, bottom, left), name in zip(face_locations, face_usn):
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(
