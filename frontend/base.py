@@ -336,11 +336,11 @@ def form():
                 np_img = decode(img_data=img)
                 # cv2.imshow('img',np_img)
                 # cv2.waitKey(0)
-<<<<<<< HEAD
+
                 align_img = aligner(np_img)
                 embeddings.append(get_embedding(align_img, model=model))
        
-=======
+
                 face_picture = face_recognition.load_image_file(np_img)
                 face_locations = face_recognition.face_locations(face_picture)
                 face_encodings = face_recognition.face_encodings(face_picture,face_locations)
@@ -348,7 +348,7 @@ def form():
         
             b = branch.split(" ")[0]
             print(b)
->>>>>>> c93aa4b... attendance
+
             store = Storage(branch=branch.split(" ")[0], sem=semester)
             file = store.write_bytes(data=embeddings, usn=usn)
 
