@@ -391,6 +391,18 @@ def decode(img_data=None):
         np_img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
     return np_img
 
+'''
+To list out students who are present for the given subject
+'''
+@app.rote('/get_attendees', methods=['GET', 'POST'])
+def get_attendees():
+    
+    if request.method == "POST":
+        subject = request.get("subject")
+        conn = MysqlConnector()
+        attendees = conn.select(columnName = ['usn','fname'], tableName="attendance", where=f"sub_id = {subject}")
+        return jsonify(attendees)
+    
 # app.route("/viz", methods=["POST", "GET"])
 # def viz():
     
