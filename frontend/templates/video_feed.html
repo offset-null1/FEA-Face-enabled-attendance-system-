@@ -1,7 +1,7 @@
 {% extends 'attendance.html' %}
 {% block video_feed %}
     
-    <img src="{{ url_for('video') }}">
+    <img src="{{ url_for('video', data=data) }}">
 
     
 {% endblock %}
