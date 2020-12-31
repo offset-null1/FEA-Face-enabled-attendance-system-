@@ -406,21 +406,7 @@ def get_attendees():
         conn = MysqlConnector()
         attendees = conn.select(columnName = ['usn','fname'], tableName="attendance", where=f"sub_id = {subject}")
         return jsonify(attendees)
-    
-# app.route("/viz", methods=["POST", "GET"])
-# def viz():
-    
-#     if request.method == "POST":
-#         logging.info(" POST request")
-#         usn = request.form.get("usn")
-#         project_id = request.form.get("project_id")
-#         project_marks = request.form.get("project_marks")
-#         where = f'usn = {usn}'
-#         conn = MysqlConnector()
-#         res=conn.select(tableName='students',columnName='usn',where=where)
-        
-    
-    # return render_template("viz.html")
+   
 
 
 if __name__ == "__main__":
