@@ -1,10 +1,10 @@
 #!/usr/bin/python3
-import re
 from flask.helpers import flash
 from backend.mysqlConnector import MysqlConnector
 from flask import Flask, render_template, Response, redirect, url_for, request, jsonify
 from backend.recognize import recognize, load_known_faces, camera
 from backend.storage import Storage
+import json
 import base64
 import logging
 import numpy as np
@@ -55,15 +55,17 @@ load_known_faces()
 '''
 @app.route("/")
 def base():
-    return render_template("navbar.html")
+    return render_template("base.html")
 
 ''' 
     For video feed
 '''
-def gen(recognize):
-
+def gen(cam):
+    data=load_known_faces()
+    # print(data)
     while True:
-        raw_detect, _ = recognize()
+        # frame = cam.getRawFrame()
+        raw_detect, _ = recognize(cam, data['encodings'], data['usn'])
         yield (
             b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + raw_detect + b"\r\n"
         )
@@ -73,27 +75,29 @@ def gen(recognize):
 def video():
     cam = camera()
     return Response(
-        gen(recognize(cam)), mimetype="multipart/x-mixed-replace; boundary=frame" 
+        gen(cam), mimetype="multipart/x-mixed-replace; boundary=frame" 
     )
 
 
-@app.route("/attendance", methods=['POST'])
+@app.route("/attendance", methods=['POST', 'GET'])
 def attendance():
-    conn = MysqlConnector()
+    
     if request.method == 'POST':
+        conn = MysqlConnector()
         json_data = request.get_json()
+        # print(json_data)
         usn_present_today = conn.select(columnName=['students.fname', 'attendance.usn'] , tableName=['attendance', 'students'], where=f"attendance.date = '{json_data['date']}' AND attendance.usn = f'{json_data['usn']}' ")
         
         if usn_present_today:
-            update_usn = conn.update(tableName='attendance', column={'logout': f" '{json_data['hour']}' "}, where = f"name = '{json_data['name']}'")
+            update_usn = conn.update(tableName='attendance', column={'logout': 'now()' }, where = f"name = '{json_data['name']}'")
         else:
-            insert_usn = conn.insert(execute=True, tableName='attendance', column={'usn': f" '{json_data['usn']}' ", 'date': f" '{json_data['date']}' ", 'login': f" '{json_data['hour']}' "})
+            insert_usn = conn.insert(execute=True, tableName='attendance', column={'usn': f" '{json_data['usn']}' ", 'date': f" '{json_data['date']}' ", 'login': 'now()' })
+        conn.closeConnection()
         
         #return details along
-        return jsonify(json_data) , render_template("video_feed.html")
-    conn.closeConnection()
-        
-    return render_template("video_feed.html")
+        return render_template("video_feed.html")
+    else:    
+        return render_template("video_feed.html")
 
 ''' 
 To display last 5 attendees 
@@ -388,7 +392,7 @@ def decode(img_data=None):
 '''
 To list out students who are present for the given subject
 '''
-@app.rote('/get_attendees', methods=['GET', 'POST'])
+@app.route('/get_attendees', methods=['GET', 'POST'])
 def get_attendees():
     
     if request.method == "POST":
