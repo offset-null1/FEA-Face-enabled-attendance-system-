@@ -1,0 +1,57 @@
+2021-01-01 17:48:12.961:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7f69046c5978>
+2021-01-01 17:48:12.961:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-01 17:48:12.961:mysqlConnector.py:addTicks:INFO:98: Adding ticks to params :['students.fname', 'attendance.usn'] :: Of type:<class 'list'>
+2021-01-01 17:48:12.961:mysqlConnector.py:addTicks:DEBUG:110: After adding ticks :['`students.fname`', '`attendance.usn`']
+2021-01-01 17:48:12.962:mysqlConnector.py:executeQuery:CRITICAL:251:1054 (42S22): Unknown column 'students.fname' in 'field list'
+2021-01-01 17:48:55.89 :mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7f52ab673a58>
+2021-01-01 17:48:55.89 :mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-01 17:48:55.89 :mysqlConnector.py:addTicks:INFO:98: Adding ticks to params :['students.fname', 'attendance.usn'] :: Of type:<class 'list'>
+2021-01-01 17:48:55.89 :mysqlConnector.py:addTicks:DEBUG:110: After adding ticks :['`students.fname`', '`attendance.usn`']
+2021-01-01 17:48:55.90 :mysqlConnector.py:executeQuery:CRITICAL:251:1054 (42S22): Unknown column 'students.fname' in 'field list'
+2021-01-01 17:51:41.798:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7fa6d3d0ea90>
+2021-01-01 17:51:41.798:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-01 17:56:30.140:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7f8fad737ac8>
+2021-01-01 17:56:30.140:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-01 17:56:30.141:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT students.fname,attendance.usn FROM attendance,students WHERE  attendance.usn = '1SK18CS053' ; :: Params: None :: Multi: False
+2021-01-01 17:56:30.141:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-01 17:56:30.141:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-01 17:57:03.365:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7fde63729ac8>
+2021-01-01 17:57:03.365:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-01 17:57:03.366:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT students.fname,students.usn FROM attendance,students WHERE  attendance.usn = '1SK18CS053' ; :: Params: None :: Multi: False
+2021-01-01 17:57:03.366:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-01 17:57:03.366:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-01 19:33:40.770:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7ff905f4cac8>
+2021-01-01 19:33:40.771:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-01 19:33:40.772:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT students.fname,students.usn FROM attendance,students WHERE  students.usn = '1SK18CS053' ; :: Params: None :: Multi: False
+2021-01-01 19:33:40.772:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-01 19:33:40.772:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-01 19:34:31.285:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7fe86c5aca58>
+2021-01-01 19:34:31.285:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-01 19:34:31.287:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT students.fname,students.usn FROM attendance,students WHERE  students.usn = '1SK18CS053' ; :: Params: None :: Multi: False
+2021-01-01 19:34:31.287:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-01 19:34:31.287:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-01 19:34:39.365:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7fbce5225a58>
+2021-01-01 19:34:39.366:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-01 19:34:39.367:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT students.fname,students.usn FROM attendance,students WHERE  students.usn = '1SK18CS053' ; :: Params: None :: Multi: False
+2021-01-01 19:34:39.367:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-01 19:34:39.367:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-01 19:36:55.445:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7f8c634a7a20>
+2021-01-01 19:36:55.446:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-01 19:36:55.447:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT attendance.usn,students.fname FROM attendance,students WHERE  students.usn = '123e' ; :: Params: None :: Multi: False
+2021-01-01 19:36:55.447:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-01 19:36:55.447:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-01 19:37:08.853:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7f528cf31ac8>
+2021-01-01 19:37:08.854:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-01 19:37:08.855:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT attendance.usn,students.fname FROM attendance,students WHERE  students.usn = '123e' ; :: Params: None :: Multi: False
+2021-01-01 19:37:08.855:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-01 19:37:08.855:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-01 19:42:05.55 :mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7fd328b1aa90>
+2021-01-01 19:42:05.55 :mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-01 19:42:05.56 :mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT attendance.usn,students.fname FROM attendance,students WHERE  students.usn = '123e' ; :: Params: None :: Multi: False
+2021-01-01 19:42:05.57 :mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-01 19:42:05.57 :mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-01 19:42:35.657:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7fdf2363db00>
+2021-01-01 19:42:35.657:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-01 19:42:35.658:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT attendance.usn,students.fname FROM attendance,students WHERE  students.usn = '123e' ; :: Params: None :: Multi: False
+2021-01-01 19:42:35.659:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-01 19:42:35.659:mysqlConnector.py:executeQuery:DEBUG:233: Committed
