@@ -467,9 +467,9 @@ class MysqlConnector:
                 elif type(colOption) is str:
                     query += MysqlConnector.addTicks(colOption)
                 elif type(colOption) is list:
-                    tickedList = MysqlConnector.addTicks(colOption)
-                    tickedCol = ",".join(tickedList)
-                    query += tickedCol
+                    # tickedList = MysqlConnector.addTicks(colOption)
+                    # tickedCol = ",".join(tickedList)
+                    query += ','.join([str(i) for i in colOption])
                 query += " FROM " 
                 
                 if type(tableName) is list:
@@ -770,6 +770,12 @@ class MysqlConnector:
 
 
 if __name__ == "__main__":
-    print("Raw query class")
+    conn = MysqlConnector()
+      
+    usn_present_today = conn.select(columnName=['attendance.usn','students.fname'] , tableName=['attendance', 'students'], where=" students.usn = '123e' ")
+    if usn_present_today:
+        print(usn_present_today)
+    else:
+        print('no')
 else:
     pass

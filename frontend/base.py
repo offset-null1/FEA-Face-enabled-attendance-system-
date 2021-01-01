@@ -86,10 +86,11 @@ def attendance():
         conn = MysqlConnector()
         json_data = request.get_json()
         # print(json_data)
-        usn_present_today = conn.select(columnName=['students.fname', 'attendance.usn'] , tableName=['attendance', 'students'], where=f"attendance.date = '{json_data['date']}' AND attendance.usn = f'{json_data['usn']}' ")
+        usn_present_today = conn.select(columnName=['attendance.usn','students.fname'] , tableName=['attendance', 'students'], where=f" students.usn = {json_data['usn']} ")
+
         
         if usn_present_today:
-            update_usn = conn.update(tableName='attendance', column={'logout': 'now()' }, where = f"name = '{json_data['name']}'")
+            update_usn = conn.update(tableName='attendance', column={'logout': 'now()' }, where = f"usn = '{usn_present_today[0]}'")
         else:
             insert_usn = conn.insert(execute=True, tableName='attendance', column={'usn': f" '{json_data['usn']}' ", 'date': f" '{json_data['date']}' ", 'login': 'now()' })
         conn.closeConnection()
