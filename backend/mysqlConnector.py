@@ -519,7 +519,7 @@ class MysqlConnector:
                 else:
                     try:
                         assert type(orderBy) is str
-                        query += "ORDER BY " + orderBy 
+                        query += " ORDER BY " + orderBy 
                     except AssertionError as err:
                         logging.critical(
                             f" ORDER BY clause should be of type str but give type is :{type(orderBy)}"
@@ -770,11 +770,22 @@ class MysqlConnector:
 
 if __name__ == "__main__":
     conn = MysqlConnector()
-      
-    usn_present_today = conn.select(columnName=['attendance.usn','students.fname'] , tableName=['attendance', 'students'], where=" students.usn = '123e' ")
-    if usn_present_today:
-        print(usn_present_today)
-    else:
-        print('no')
+    
+    answers_to_send={}
+    det = ['usn','name','login','logout']
+    
+    last_entries = conn.select(columnName = ['distinct(attendance.usn)','login' ,'logout','fname','sem'] , tableName = ['attendance','students'], where='attendance.usn=students.usn' ,orderBy = 'usn DESC LIMIT 5')
+    
+    print(last_entries)
+    for index,person in enumerate(last_entries):
+            answers_to_send[index] = {}
+            for i in person:
+                for j in det:
+                    answers_to_send[index][j] = str(i)
+                
+    print(answers_to_send)
+    #         for i,details in person:
+    # print(answers_to_send)
+
 else:
     pass

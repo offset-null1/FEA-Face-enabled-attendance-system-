@@ -86,7 +86,7 @@ def attendance():
         conn = MysqlConnector()
         json_data = request.get_json()
         # print(json_data)
-        usn_present_today = conn.select(columnName=['attendance.usn','students.fname'] , tableName=['attendance', 'students'], where=f" students.usn = {json_data['usn']} ")
+        usn_present_today = conn.select(columnName=['attendance.usn','students.fname'] , tableName=['attendance', 'students'], where=f" students.usn = '{json_data['usn']}' ")
 
         
         if usn_present_today:
@@ -107,13 +107,15 @@ To display last 5 attendees
 def get_5_last_entries():
     answers_to_send = {}
     conn = MysqlConnector()
-    
-    last_entries = conn.select(columnName = ['usn', 'fname'] , tableName = 'students', orderBy = 'usn DESC LIMIT 5')
-    if last_entries:
+    cols = ['usn','name','login','logout']
+    last_entries = conn.select(columnName = ['distinct(attendance.usn)','login' ,'logout','fname','sem'] , tableName = ['attendance','students'], where='attendance.usn=students.usn' ,orderBy = 'usn DESC LIMIT 5')
+    #{0: {'usn': '', 'name': '', 'login': '', 'logout': ''}, 1: {'usn': '', 'name': '', 'login': '','logout': ''}, 2: {...}, ...}
+    if last_entries:         
         for index,person in enumerate(last_entries):
-            answers_to_send[index] = {}
-            for i,details in person:
-                answers_to_send[index][i] = str(details)
+                answers_to_send[index] = {}
+                for i in person:
+                    for j in cols:
+                        answers_to_send[index][j] = str(i)
     else:
         answers_to_send = {'error': 'DB is not connected or empty'}
     if conn:
