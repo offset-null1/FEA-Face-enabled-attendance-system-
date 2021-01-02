@@ -55,3 +55,41 @@
 2021-01-01 19:42:35.658:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT attendance.usn,students.fname FROM attendance,students WHERE  students.usn = '123e' ; :: Params: None :: Multi: False
 2021-01-01 19:42:35.659:mysqlConnector.py:commit:WARNING:88: Commit
 2021-01-01 19:42:35.659:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-02 13:01:26.958:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7f8ab0129b00>
+2021-01-02 13:01:26.958:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-02 13:01:26.959:mysqlConnector.py:executeQuery:CRITICAL:251:1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'BY usn DESC LIMIT 5' at line 1
+2021-01-02 13:02:12.257:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7fe72ce6aac8>
+2021-01-02 13:02:12.257:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-02 13:02:12.257:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT attendance.usn,fname FROM attendance,students WHERE attendance.usn=students.usn ORDER BY usn DESC LIMIT 5; :: Params: None :: Multi: False
+2021-01-02 13:02:12.258:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-02 13:02:12.258:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-02 13:03:57.352:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7f951bb75b00>
+2021-01-02 13:03:57.352:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-02 13:03:57.353:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT distinct(attendance.usn),fname FROM attendance,students WHERE attendance.usn=students.usn ORDER BY usn DESC LIMIT 5; :: Params: None :: Multi: False
+2021-01-02 13:03:57.353:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-02 13:03:57.353:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-02 13:06:29.465:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7ff5c56bab70>
+2021-01-02 13:06:29.465:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-02 13:06:29.466:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT distinct(attendance.usn),fname FROM attendance,students WHERE attendance.usn=students.usn ORDER BY usn DESC LIMIT 5; :: Params: None :: Multi: False
+2021-01-02 13:06:29.466:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-02 13:06:29.466:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-02 13:07:13.270:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7fc39cb65b00>
+2021-01-02 13:07:13.271:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-02 13:07:13.272:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT distinct(attendance.usn),fname FROM attendance,students WHERE attendance.usn=students.usn ORDER BY usn DESC LIMIT 5; :: Params: None :: Multi: False
+2021-01-02 13:07:13.272:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-02 13:07:13.272:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-02 13:09:20.678:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7f3948c6fb38>
+2021-01-02 13:09:20.679:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-02 13:09:20.679:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT distinct(attendance.usn),fname FROM attendance,students WHERE attendance.usn=students.usn ORDER BY usn DESC LIMIT 5; :: Params: None :: Multi: False
+2021-01-02 13:09:20.680:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-02 13:09:20.680:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-02 13:17:30.720:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7fc0eea1ec88>
+2021-01-02 13:17:30.721:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-02 13:17:30.722:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT distinct(attendance.usn),login,logout,fname,sem FROM attendance,students WHERE attendance.usn=students.usn ORDER BY usn DESC LIMIT 5; :: Params: None :: Multi: False
+2021-01-02 13:17:30.722:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-02 13:17:30.722:mysqlConnector.py:executeQuery:DEBUG:233: Committed
+2021-01-02 13:18:30.126:mysqlConnector.py:__init__:INFO:46: Connecting with :<mysql.connector.connection_cext.CMySQLConnection object at 0x7f475a8b3d30>
+2021-01-02 13:18:30.126:mysqlConnector.py:__init__:INFO:48: Cursor at :CMySQLCursorBuffered: (Nothing executed yet)
+2021-01-02 13:18:30.128:mysqlConnector.py:executeQuery:INFO:231: Query in execution :SELECT distinct(attendance.usn),login,logout,fname,sem FROM attendance,students WHERE attendance.usn=students.usn ORDER BY usn DESC LIMIT 5; :: Params: None :: Multi: False
+2021-01-02 13:18:30.128:mysqlConnector.py:commit:WARNING:88: Commit
+2021-01-02 13:18:30.128:mysqlConnector.py:executeQuery:DEBUG:233: Committed

@@ -78,7 +78,7 @@ def recognize(cam,known_face_encodings, known_face_usn):
         else:
             face_usn = []
 
-            json_to_export = {}
+            # json_to_export = {}
             for face_encoding in face_encodings:
                 matches = face_recognition.compare_faces(
                     known_face_encodings, face_encoding
@@ -93,18 +93,12 @@ def recognize(cam,known_face_encodings, known_face_usn):
 
                 if matches[best_match_index]:
                     usn = known_face_usn[best_match_index]
-                    json_to_export["usn"] = usn
-                    json_to_export[
-                        "hour"
-                    ] = f"{time.localtime().tm_hour}:{time.localtime().tm_min}"
-                    json_to_export[
-                        "date"
-                    ] = f"{time.localtime().tm_year}-{time.localtime().tm_mon}-{time.localtime().tm_mday}"
+                #     json_to_export["usn"] = usn
 
-                    json_to_export["picture_array"] = jpg.tolist()
+                #     json_to_export["picture_array"] = jpg.tolist()
 
-                    r = requests.post(url='http://127.0.0.1:5000/attendance', json=json_to_export)
-                    logger.info("Status: ", r.status_code)
+                #     r = requests.post(url='http://127.0.0.1:5000/attendance', json=json_to_export)
+                #     logger.info("Status: ", r.status_code)
 
                 face_usn.append(usn)
                 process_this_frame = not process_this_frame
