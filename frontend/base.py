@@ -91,25 +91,24 @@ def attendance():
         # print(json_data)
         usn_present_today = conn.select(columnName=['attendance.usn','students.fname'] , tableName=['attendance', 'students'], where=f" students.usn = '{json_data['usn']}' AND attendance.date = '{json_data['date']}' ")
 
-        
         if usn_present_today:
             update_usn = conn.update(execute=True, tableName='attendance', column={'logout': 'now()' }, where = f"usn = '{json_data['usn']}'")
-            entries = get_5_last_entries()
         else:
             insert_usn = conn.insert(execute=True, tableName='attendance', column={'usn': f" '{json_data['usn']}' ", 'date': f" '{json_data['date']}' ", 'login': 'now()' })
-            entries = get_5_last_entries()
+            
         logging.debug(entries)
         conn.closeConnection()
-        
+    entries = get_5_last_entries()
+    
         #return details along
-        return render_template("video_feed.html", entry=entries)
-    else:    
-        return render_template("video_feed.html")
+    return render_template("video_feed.html", entry=entries)
+    # else:    
+        # return render_template("video_feed.html")
 
 ''' 
 To display last 5 attendees 
 '''
-# @app.route("/get_5_last_entries", methods=['GET'])
+
 def get_5_last_entries():
     answers_to_send = {}
     conn = MysqlConnector()
@@ -126,8 +125,6 @@ def get_5_last_entries():
         answers_to_send = {'error': 'DB is not connected or empty'}
     if conn:
         conn.closeConnection()
-    # r = requests.post(url='http://127.0.0.1:5000/attendance', json=answers_to_send)
-    # logging.info(r.status_code)
     return answers_to_send
     
                 

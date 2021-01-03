@@ -1,8 +1,75 @@
 {% extends 'attendance.html' %}
 {% block video_feed %}
     
-    <img src="{{ url_for('video', data=data) }}">
+    <img src="{{ url_for('video') }}">
+<!-- Need to change table content on runtime  -->
+    {% if entry %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="text-center">#</th>
+                    <th>USN</th>
+                    <th>Name</th>
+                    <th>Login</th>
+                    <th>Logout</th>
+                    <th>Sem</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center">1</td>
+                    <td>{{ entry[0]['usn'] }}</td>
+                    <td>{{ entry[0]['name'] }}</td>
+                    <td>{{ entry[0]['login'] }}</td>
+                    <td>{{ entry[0]['logout'] }}</td>
+                    <td>{{ entry[0]['sem'] }}</td>
 
+
+                </tr> 
+                <tr>
+                    <td class="text-center">2</td>
+                    <td>{{ entry[1]['usn'] }}</td>
+                    <td>{{ entry[1]['name'] }}</td>
+                    <td>{{ entry[1]['login'] }}</td>
+                    <td>{{ entry[1]['logout'] }}</td>
+                    <td>{{ entry[1]['sem'] }}</td>
+
+
+                </tr>
+                <tr>
+                    <td class="text-center">3</td>
+                    <td>{{ entry[2]['usn'] }}</td>
+                    <td>{{ entry[2]['name'] }}</td>
+                    <td>{{ entry[2]['login'] }}</td>
+                    <td>{{ entry[2]['logout'] }}</td>
+                    <td>{{ entry[2]['sem'] }}</td>
+
+
+                </tr>
+                <tr>
+                    <td class="text-center">4</td>
+                    <td>{{ entry[3]['usn'] }}</td>
+                    <td>{{ entry[3]['name'] }}</td>
+                    <td>{{ entry[3]['login'] }}</td>
+                    <td>{{ entry[3]['logout'] }}</td>
+                    <td>{{ entry[3]['sem'] }}</td>
+
+
+                </tr>
+                <tr>
+                    <td class="text-center">5</td>
+                    <td>{{ entry[4]['usn'] }}</td>
+                    <td>{{ entry[4]['name'] }}</td>
+                    <td>{{ entry[4]['login'] }}</td>
+                    <td>{{ entry[4]['logout'] }}</td>
+                    <td>{{ entry[4]['sem'] }}</td>
+
+
+                </tr>
+            </tbody>
+        </table>
+ 
+    {% endif %}
     
 {% endblock %}
 
