@@ -93,16 +93,16 @@ def attendance():
 
         
         if usn_present_today:
-            update_usn = conn.update(tableName='attendance', column={'logout': 'now()' }, where = f"usn = '{json_data['usn']}'")
+            update_usn = conn.update(execute=True, tableName='attendance', column={'logout': 'now()' }, where = f"usn = '{json_data['usn']}'")
             entries = get_5_last_entries()
         else:
             insert_usn = conn.insert(execute=True, tableName='attendance', column={'usn': f" '{json_data['usn']}' ", 'date': f" '{json_data['date']}' ", 'login': 'now()' })
             entries = get_5_last_entries()
-        print(entries)
+        logging.debug(entries)
         conn.closeConnection()
         
         #return details along
-        return render_template("video_feed.html", entry=jsonify(entries))
+        return render_template("video_feed.html", entry=entries)
     else:    
         return render_template("video_feed.html")
 
@@ -113,15 +113,15 @@ To display last 5 attendees
 def get_5_last_entries():
     answers_to_send = {}
     conn = MysqlConnector()
-    cols = ['usn','name','login','logout']
-    last_entries = conn.select(columnName = ['distinct(attendance.usn)','login' ,'logout','fname','sem'] , tableName = ['attendance','students'], where='attendance.usn=students.usn' ,orderBy = 'usn DESC LIMIT 5')
+    cols = ['usn','name','login','logout', 'sem']
+    last_entries = conn.select(columnName = ['distinct(attendance.usn)','fname', 'login' ,'logout','sem'] , tableName = ['attendance','students'], where='attendance.usn=students.usn' ,orderBy = 'usn DESC LIMIT 5')
+    
     #{0: {'usn': '', 'name': '', 'login': '', 'logout': ''}, 1: {'usn': '', 'name': '', 'login': '','logout': ''}, 2: {...}, ...}
     if last_entries:         
         for index,person in enumerate(last_entries):
                 answers_to_send[index] = {}
-                for i in person:
-                    for j in cols:
-                        answers_to_send[index][j] = str(i)
+                for i,j in zip(cols,person):
+                    answers_to_send[index][i] = str(j)
     else:
         answers_to_send = {'error': 'DB is not connected or empty'}
     if conn:

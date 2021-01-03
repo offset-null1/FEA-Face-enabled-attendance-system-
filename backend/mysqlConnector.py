@@ -6,6 +6,7 @@ from mysql.connector import errorcode
 import logging
 import sys
 import os
+import pprint
 
 
 fileName = sys.argv[0]
@@ -422,6 +423,7 @@ class MysqlConnector:
                 
                 keys = list(column.keys())
                 values = list(column.values())
+            
                 values = ','.join([i for i in values])
                 column=MysqlConnector.addTicks(keys)
                 query = "INSERT INTO "+ MysqlConnector.addTicks(tableName)  + '('+ ','.join(str(i) for i in column) +')' + " VALUES ("+values +');'
@@ -776,6 +778,7 @@ class MysqlConnector:
 
 
 if __name__ == "__main__":
-    print('mysql script')
+    ...
+    
 else:
     pass
