@@ -314,7 +314,7 @@ class MysqlConnector:
     def create(self, **kwargs):
         """
         [DDL] To create table or database.
-        USAGE: Accepts dict -> (operation= table/database, tableName/databaseName= '', columns={field1 : {dataType:' ', constraint: ' '/[]}, field2: {... , ...}, ...})
+        USAGE: Accepts dict -> (operation= table/database, tableName/databaseName= '', column={field1 : {dataType:' ', constraint: ' '/[]}, field2: {... , ...}, ...})
         To create table or database.
         Table:  set global innodb_file_per_table=1; (default)
                 default engine = innodb
@@ -333,17 +333,17 @@ class MysqlConnector:
                         + MysqlConnector.addTicks(kwargs["tableName"])
                         + " ("
                     )
-                    keys = list(kwargs["columns"].keys())
+                    keys = list(kwargs["column"].keys())
                     logging.debug(f" Fields name :{keys}")
 
-                    keyDataType = [i["dataType"] for i in kwargs["columns"].values()]
+                    keyDataType = [i["dataType"] for i in kwargs["column"].values()]
                     logging.debug(f" Data type name :{keyDataType}")
                 except KeyError as err:
                     logging.critical(" (Table name) or (Datatype for fields) not given")
                     logging.critical("Retruning none")
                     return
 
-                keyConstraint = MysqlConnector.getConstraint(kwargs["columns"])
+                keyConstraint = MysqlConnector.getConstraint(kwargs["column"])
 
                 for i in range(len(keys)):
                     query += MysqlConnector.addTicks(keys[i]) + " " + keyDataType[i]
@@ -377,7 +377,7 @@ class MysqlConnector:
                     "CREATE VIEW "
                     + MysqlConnector.addTicks(kwargs["viewName"])
                     + " AS SELECT "
-                    + MysqlConnector.addTicks(kwargs["columns"])
+                    + MysqlConnector.addTicks(kwargs["column"])
                     + " FROM "
                     + kwargs["tableName"]
                     + " INNER JOIN "
@@ -547,19 +547,25 @@ class MysqlConnector:
     def update(self, **kwargs):
         """
         [DML] To update table.
-        USAGE: Accepts dict -> (tableName='', columns={ 'colName' : 'setCondition', : , ... }, where='')
+        USAGE: Accepts dict -> (execute= bool ,tableName='', column={ 'colName' : 'setCondition', : , ... }, where='')
 
         """
         if kwargs:
             tableName = kwargs.get("tableName")
-            columns = kwargs.get("columns")
+            column = kwargs.get("column")
             where = kwargs.get("where")
-            if tableName and columns:
+
+            if tableName and column:
                 try:
-                    assert type(columns) is dict
+                    assert type(column) is dict
                     query = "UPDATE " + "`" + tableName + "`" + " SET "
-                    for i, j in columns.items():
-                        query += "`" + i + "` =" + " '" + j + "'"
+                    for i, j in column.items():
+                        query += "`" + i + "` =" 
+                        if j.lower() == 'now()':
+                            query+= j 
+                        else:
+                            query+="'"+ j +"'"
+                    
                     if where:
                         try:
                             assert type(where) is str
@@ -570,6 +576,7 @@ class MysqlConnector:
                                 f" Where clause should of the type str but given type is: {type(where)}"
                             )
                             return
+                    query+=";"
                     execute = kwargs.get("execute")
                     if execute:
                         self.executeQuery(query)
@@ -582,7 +589,7 @@ class MysqlConnector:
 
                 except AssertionError as err:
                     logging.critical(
-                        f"Columns field to 'SET' should be of the type DICT but given type is {type(columns)}"
+                        f"column field to 'SET' should be of the type DICT but given type is {type(column)}"
                     )
 
     def index(self, **kwargs):
@@ -739,10 +746,10 @@ class MysqlConnector:
                 proc += in_query + "; "
             if "update" in transaction:
                 tableName = kwargs.get("tableName")
-                columns = kwargs.get("columns")
+                column = kwargs.get("column")
                 where = kwargs.get("where")
                 up_query = self.update(
-                    tableName=tableName, columns=columns, where=where
+                    tableName=tableName, column=column, where=where
                 )
                 proc += up_query + "; "
             proc += "COMMIT; END $$ DELIMITER ;"
@@ -769,23 +776,6 @@ class MysqlConnector:
 
 
 if __name__ == "__main__":
-    conn = MysqlConnector()
-    
-    answers_to_send={}
-    det = ['usn','name','login','logout']
-    
-    last_entries = conn.select(columnName = ['distinct(attendance.usn)','login' ,'logout','fname','sem'] , tableName = ['attendance','students'], where='attendance.usn=students.usn' ,orderBy = 'usn DESC LIMIT 5')
-    
-    print(last_entries)
-    for index,person in enumerate(last_entries):
-            answers_to_send[index] = {}
-            for i in person:
-                for j in det:
-                    answers_to_send[index][j] = str(i)
-                
-    print(answers_to_send)
-    #         for i,details in person:
-    # print(answers_to_send)
-
+    print('mysql script')
 else:
     pass
