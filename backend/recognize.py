@@ -1,14 +1,33 @@
 import face_recognition
 import numpy as np
 import time
+import sys
 import logging
 import cv2
 import os
 import requests
 
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+fileName = sys.argv[0]
+
+cwd = os.getcwd()
+
+if fileName.startswith("."):
+    PATH = cwd + fileName[1:]
+elif fileName.startswith("/"):
+    PATH = fileName
+else:
+    PATH = cwd + "/" + fileName
+
+logging.info(f" PATH to executable {PATH}")
+
+
+logging.basicConfig(
+    filename=PATH + "-application.log",
+    format="%(asctime)s.%(msecs)-3d:%(filename)s:%(funcName)s:%(levelname)s:%(lineno)d:%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.DEBUG,
+)
 
 '''
 Camera class to access system webcam
@@ -17,25 +36,25 @@ class camera:
     def __init__(self, source=0):
         try:
             self.cap = cv2.VideoCapture(int(source))
-            logger.debug(f"Camera obj:{self.cap}")
+            logging.debug(f"Camera obj:{self.cap}")
         except:
-            logger.critical(
+            logging.critical(
                 "Video capture failed, please check the given video source is valid"
             )
-            logger.critical("Returning...")
+            logging.critical("Returning...")
             return
 
     def __del__(self):
         self.cap.release()
-        logger.info(" VideoCapture source released")
+        logging.info(" VideoCapture source released")
 
     def getRawFrames(self):
         ret, frame = self.cap.read()
         if ret:
             return frame
         else:
-            logger.warning(" VideoCapture source is not opened.")
-            logger.critical(" Returning None")
+            logging.warning(" VideoCapture source is not opened.")
+            logging.critical(" Returning None")
             return
 '''
 Loading all known registered students 
@@ -56,7 +75,7 @@ def load_known_faces():
         known_face_usn.append(filename[:-4])
         known_face_encodings.append(face_recognition.face_encodings(face)[0])
     data = {"encodings": known_face_encodings, "usn": known_face_usn, "filenames": known_faces_filenames}
-    logger.debug(f"USN recognized: {data['usn']}")
+    logging.debug(f"USN recognized: {data['usn']}")
     return data
     
 '''
@@ -78,7 +97,7 @@ def recognize(cam,known_face_encodings, known_face_usn):
         else:
             face_usn = []
 
-            # json_to_export = {}
+            json_to_export = {}
             for face_encoding in face_encodings:
                 matches = face_recognition.compare_faces(
                     known_face_encodings, face_encoding
@@ -93,12 +112,12 @@ def recognize(cam,known_face_encodings, known_face_usn):
 
                 if matches[best_match_index]:
                     usn = known_face_usn[best_match_index]
-                #     json_to_export["usn"] = usn
-
-                #     json_to_export["picture_array"] = jpg.tolist()
-
-                #     r = requests.post(url='http://127.0.0.1:5000/attendance', json=json_to_export)
-                #     logger.info("Status: ", r.status_code)
+                    json_to_export["usn"] = usn
+                    
+                    json_to_export['date'] = f'{time.localtime().tm_year}-{time.localtime().tm_mon}-{time.localtime().tm_mday}'
+                    logging.info(f"{json_to_export['date']}")
+                    r = requests.post(url='http://127.0.0.1:5000/attendance', json=json_to_export)
+                    logging.info("Status: ", r.status_code)
 
                 face_usn.append(usn)
                 process_this_frame = not process_this_frame

@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from flask.helpers import flash
+from requests.api import get
 from backend.mysqlConnector import MysqlConnector
 from flask import Flask, render_template, Response, redirect, url_for, request, jsonify
 from backend.recognize import recognize, load_known_faces, camera
@@ -13,6 +14,7 @@ import sys
 import os
 import json
 import face_recognition
+import requests
 
 # from vizApp import dashApp
 
@@ -84,26 +86,30 @@ def attendance():
     
     if request.method == 'POST':
         conn = MysqlConnector()
+        entries={}
         json_data = request.get_json()
         # print(json_data)
-        usn_present_today = conn.select(columnName=['attendance.usn','students.fname'] , tableName=['attendance', 'students'], where=f" students.usn = '{json_data['usn']}' ")
+        usn_present_today = conn.select(columnName=['attendance.usn','students.fname'] , tableName=['attendance', 'students'], where=f" students.usn = '{json_data['usn']}' AND attendance.date = '{json_data['date']}' ")
 
         
         if usn_present_today:
-            update_usn = conn.update(tableName='attendance', column={'logout': 'now()' }, where = f"usn = '{usn_present_today[0]}'")
+            update_usn = conn.update(tableName='attendance', column={'logout': 'now()' }, where = f"usn = '{json_data['usn']}'")
+            entries = get_5_last_entries()
         else:
             insert_usn = conn.insert(execute=True, tableName='attendance', column={'usn': f" '{json_data['usn']}' ", 'date': f" '{json_data['date']}' ", 'login': 'now()' })
+            entries = get_5_last_entries()
+        print(entries)
         conn.closeConnection()
         
         #return details along
-        return render_template("video_feed.html")
+        return render_template("video_feed.html", entry=jsonify(entries))
     else:    
         return render_template("video_feed.html")
 
 ''' 
 To display last 5 attendees 
 '''
-@app.route("/get_5_last_entries", methods=['GET'])
+# @app.route("/get_5_last_entries", methods=['GET'])
 def get_5_last_entries():
     answers_to_send = {}
     conn = MysqlConnector()
@@ -120,7 +126,10 @@ def get_5_last_entries():
         answers_to_send = {'error': 'DB is not connected or empty'}
     if conn:
         conn.closeConnection()
-    return jsonify(answers_to_send)
+    # r = requests.post(url='http://127.0.0.1:5000/attendance', json=answers_to_send)
+    # logging.info(r.status_code)
+    return answers_to_send
+    
                 
 '''
 To upload students details and academic records
