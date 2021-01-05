@@ -1,0 +1,320 @@
+<!--
+=========================================================
+* BLK Design System- v1.0.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/blk-design-system
+* Copyright 2019 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT
+
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ -->
+ <!DOCTYPE html>
+ <html lang="en" class="perfect-scrollbar-off">
+ 
+ <head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   <link rel="apple-touch-icon" sizes="76x76" href="{{ url_for('static',filename='assets/img/apple-icon.png')}}">
+   <link rel="icon" type="image/png" href="{{ url_for('static',filename='assets/img/favicon.png')}}">
+   <title>
+     FEA• Face Enabled Attendance System
+   </title>
+   
+   <!--     Fonts and icons     -->
+   <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
+   <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+   <!-- Nucleo Icons -->
+   <link rel="stylesheet" href="{{ url_for('static',filename='assets/css/nucleo-icons.css')}}" />
+   <!-- CSS Files -->
+   <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/blk-design-system.min.css')}}">
+   <link rel="stylesheet" href="{{ url_for('static',filename='assets/css/blk-design-system.css')}}"/>
+   <!-- CSS Just for demo purpose, don't include it in your project -->
+   <link rel="stylesheet" href="{{ url_for('static',filename='assets/demo/demo.css')}}"  />
+ </head>
+ <style>
+     option {
+        background-color: black !important;
+    }
+
+    div{
+        row-gap: 40px !important;
+        column-gap: 300px;
+        overflow: visible;
+        
+    }
+    
+ </style>
+ 
+ <body class="register-page">
+   <!-- Navbar -->
+   <nav class="navbar navbar-expand-lg fixed-top navbar-transparent " color-on-scroll="100">
+    <div class="container">
+      <div class="navbar-translate">
+        <a class="navbar-brand" href="{{ url_for('base') }}" rel="tooltip" title="FEA• By Dakshta" data-placement="bottom" target="_blank">
+          <span>FEA•</span> Face Enabled Attendance System
+        </a>
+        <button class="navbar-toggler navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-bar bar1"></span>
+          <span class="navbar-toggler-bar bar2"></span>
+          <span class="navbar-toggler-bar bar3"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse justify-content-end" id="navigation">
+        <div class="navbar-collapse-header">
+          <div class="row">
+            <div class="col-6 collapse-brand">
+              <a>
+                FEA•
+              </a>
+            </div>
+            <div class="col-6 collapse-close text-right">
+              <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <ul class="navbar-nav">
+          <li class="nav-item p-0">
+            <a class="nav-link" rel="tooltip" title="Start taking attendance" data-placement="bottom" href="{{ url_for('attendance') }}"target="_blank">
+              <i class="tim-icons icon-badge"></i>
+              <p class="d-lg-none d-xl-none">Attendance</p>
+            </a>
+          </li>
+          <li class="nav-item p-0">
+            <a class="nav-link" rel="tooltip" title="Register a student" data-placement="bottom" href="{{ url_for('form') }}" target="_blank">
+              <i class="tim-icons icon-paper"></i>
+              <p class="d-lg-none d-xl-none">Register</p>
+            </a>
+          </li>
+          <li class="nav-item p-0">
+            <a class="nav-link" rel="tooltip" title="Upload student marks" data-placement="bottom" href="{{ url_for('upload') }}" target="_blank">
+              <i class="tim-icons icon-upload"></i>
+              <p class="d-lg-none d-xl-none">Upload</p>
+            </a>
+          </li>
+          <li class="dropdown nav-item">
+            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+              <i class="tim-icons icon-chart-bar-32"></i> Analyze
+            </a>
+            <div class="dropdown-menu dropdown-with-icons">
+              <a href="#" class="dropdown-item">
+                <i class="tim-icons icon-paper"></i> Marks
+              </a>
+              <a href="#" class="dropdown-item">
+                <i class="tim-icons icon-notes"></i>Attendance
+              </a>
+              <a href="#" class="dropdown-item">
+                <i class="tim-icons icon-bulb-63"></i>Project
+              </a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+    <div class="wrapper" >
+        <div class="page-header">
+        
+        
+            <img src="{{ url_for('static', filename='assets/img/triunghiuri.png')}}" class="shapes triangle">
+            <img src="{{ url_for('static', filename='assets/img/waves.png')}}" class="shapes wave">
+            <img src="{{ url_for('static', filename='assets/img/patrat.png')}}" class="shapes squares">
+            <img src="{{ url_for('static', filename='assets/img/cercuri.png')}}" class="shapes circle">
+
+                  <body>
+                      <div class="row" style="padding-top: 250px; margin-left: 200px;">
+                          <div class="column" >
+                              
+                                  <h4 class="text-white " align="center">Webcam feed</h4>
+                                  <video id="video" playsinline autoplay alt="webcam" ></video>   
+                          </div>
+                          <div class="column">
+                              
+                                  <h4 class="text-white" align="center">Captured</h4>
+                                  <canvas style=" background-color:rgb(19, 1, 1);" id="canvas" width="600" height="500"></canvas>    
+                              
+                          </div>
+                                    
+                         </div>
+                         <div class="text-center">
+                            <button type="button" class="btn btn-primary" id="btnCapture" onclick="capture();">Click to capture</button>
+                        </div>     
+                      </div>
+                </body>
+        </div>
+
+    
+    </div>
+
+  <div class="wrapper">
+    <div class="page-header">
+      <div class="page-header-image"></div>
+      <div class="content" style=" width: 100vw;
+      position: relative;
+      margin-left: -50vw;
+      height: 100px;
+      margin-top: 100px;
+      left: 50%;">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-5 col-md-6 offset-lg-0 offset-md-3">
+              <div id="square7" class="square square-7"></div>
+              <div id="square8" class="square square-8"></div>
+              <div class="card card-register">
+                <div class="card-header">
+                      <img class="card-img" src="{{ url_for('static',filename='assets/img/square1.png')}}" alt="Card image">
+                      <h4 class="card-title">Register</h4>
+                    </div>
+                    <div class="card-body">
+                      <form class="form">
+                        <label for="exampleFormControlInput1">USN</label>
+                        <input type="text" class="form-control" placeholder="1SK...">
+                  
+                        <label for="First Name">First Name</label>
+                        <input type="text" class="form-control" placeholder="First name">
+                      
+                    
+                        <label for="Last Name">Last Name</label>
+                        <input type="text" class="form-control" placeholder="Last name">
+                    
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">Email address</label>
+                          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+                          <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                        </div>
+
+                        <label for="exampleFormControlInput1">Phone Number</label>
+                        <input type="text" class="form-control" placeholder="Phone Number">
+                        
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1">Select your semester</label>
+                            <select class="form-control" id="exampleFormControlSelect1">
+                              <option>1</option>
+                              <option>2</option>
+                              <option>3</option>
+                              <option>4</option>
+                              <option>5</option>
+                              <option>6</option>
+                              <option>7</option> 
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1">Select your branch</label>
+                            <select class="form-control" id="exampleFormControlSelect1">
+                              <option>CSE ComputerScience</option>
+                              <option>ECE Electronics&Communication</option>
+                              <option>CE Civil</option>
+                              <option>ME Mechanical</option>
+                              <option>TE Textile</option>
+                            </select>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="card-footer">
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>    
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+          <div class="register-bg"></div>
+          <div id="square1" class="square square-1"></div>
+          <div id="square2" class="square square-2"></div>
+          <div id="square3" class="square square-3"></div>
+          <div id="square4" class="square square-4"></div>
+          <div id="square5" class="square square-5"></div>
+          <div id="square6" class="square square-6"></div>
+    </div>
+  </div>
+    
+ 
+  
+
+
+       <!--   Core JS Files   -->
+       <script src="{{ url_for('static', filename='assets/js/core/jquery.min.js') }}" type="text/javascript"></script>
+       <script src="{{ url_for('static', filename='assets/js/core/popper.min.js') }}" type="text/javascript"></script>
+       <script src="{{ url_for('static', filename='assets/js/core/bootstrap.min.js') }}" type="text/javascript"></script>
+       <script src="{{ url_for('static', filename='assets/js/plugins/perfect-scrollbar.jquery.min.js') }}"></script>
+       <!--  Plugin for Switches, full documentation here: http://www.jque.re/plugins/version3/bootstrap.switch/ -->
+       <script src="{{ url_for('static', filename='assets/js/plugins/bootstrap-switch.js') }}"></script>
+       <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+       <script src="{{ url_for('static', filename='assets/js/plugins/nouislider.min.js') }}" type="text/javascript"></script>
+       <!-- Chart JS -->
+       <script src="{{ url_for('static', filename='assets/js/plugins/chartjs.min.js') }}"></script>
+       <!--  Plugin for the DatePicker, full documentation here: https://github.com/uxsolutions/bootstrap-datepicker -->
+       <script src="{{ url_for('static', filename='assets/js/plugins/moment.min.js')}}"></script>
+       <script src="{{ url_for('static', filename='assets/js/plugins/bootstrap-datetimepicker.js')}}" type="text/javascript"></script>
+       <!-- Black Dashboard DEMO methods, don't include it in your project! -->
+       <script src="{{ url_for('static' , filename='assets/demo/demo.js')}}"></script>
+       <!-- Control Center for Black UI Kit: parallax effects, scripts for the example pages etc -->
+       <script src="{{ url_for('static' , filename='assets/js/blk-design-system.min.js')}}" type="text/javascript"></script>
+     
+  
+    <script>
+
+          if (navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true,
+                    audio: false,  
+                    video: {  
+                        width: 600, height: 500  
+              }   })
+                .then(function (stream) {                                                    
+                    video.srcObject = stream;
+                    video.play();
+                
+                })
+                .catch(function (error) {
+                    console.log(error)
+                    console.log("Something went wrong!");
+                })
+            }
+        
+        
+
+          var video = document.querySelector("#video"); 
+          var canvas = document.getElementById('canvas');
+          var context = canvas.getContext('2d');
+          imgArray = []
+
+            function capture(){
+                // var i=0;
+                // var interval = setInterval(function(){
+                    context.drawImage(video, 0, 0);  
+                
+                    var url =  canvas.toDataURL('image/png');
+                    var data_url=url.replace('data:image/png;base64,','');
+                    // imgArray.push(data_url);
+                    console.log(data_url);
+                    // i+=1;
+                    // console.log(i);
+                    // if(i==50){
+                    //     clearInterval(interval);
+                    // }
+                // },100);
+            };    
+        
+
+        function post(){
+            document.getElementById('img').value = data_url;
+          }
+
+
+        function redirect(){
+            window.location.replace("http://localhost:5000/");
+        }
+
+    </script>
+
+  </body>
+</html>
