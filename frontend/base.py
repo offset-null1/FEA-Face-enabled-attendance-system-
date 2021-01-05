@@ -349,11 +349,6 @@ def form():
                 np_img = decode(img_data=img)
                 # cv2.imshow('img',np_img)
                 # cv2.waitKey(0)
-
-                align_img = aligner(np_img)
-                embeddings.append(get_embedding(align_img, model=model))
-       
-
                 face_picture = face_recognition.load_image_file(np_img)
                 face_locations = face_recognition.face_locations(face_picture)
                 face_encodings = face_recognition.face_encodings(face_picture,face_locations)
@@ -361,7 +356,6 @@ def form():
         
             b = branch.split(" ")[0]
             print(b)
-
             store = Storage(branch=branch.split(" ")[0], sem=semester)
             file = store.write_bytes(data=embeddings, usn=usn)
 
@@ -386,11 +380,11 @@ def form():
             logging.info(f" Results after commit: {res}")
             logging.info(" Data received. Now redirecting ...")
 
-            return redirect("form.html")
+            return redirect("form1.html")
         else:
             logging.critical(f' Loaded json is: {type(json_str_img_list)}, storage skipped')
     else:
-        return render_template("form.html")
+        return render_template("form1.html")
 
 '''
 Used by form to decode received student image via post method
@@ -415,7 +409,21 @@ def get_attendees():
         conn = MysqlConnector()
         attendees = conn.select(columnName = ['usn','fname'], tableName="attendance", where=f"sub_id = {subject}")
         return jsonify(attendees)
-   
+    
+# app.route("/viz", methods=["POST", "GET"])
+# def viz():
+    
+#     if request.method == "POST":
+#         logging.info(" POST request")
+#         usn = request.form.get("usn")
+#         project_id = request.form.get("project_id")
+#         project_marks = request.form.get("project_marks")
+#         where = f'usn = {usn}'
+#         conn = MysqlConnector()
+#         res=conn.select(tableName='students',columnName='usn',where=where)
+        
+    
+    # return render_template("viz.html")
 
 
 if __name__ == "__main__":
