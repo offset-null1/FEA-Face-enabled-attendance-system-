@@ -380,11 +380,11 @@ def form():
             logging.info(f" Results after commit: {res}")
             logging.info(" Data received. Now redirecting ...")
 
-            return redirect("form.html")
+            return redirect("form1.html")
         else:
             logging.critical(f' Loaded json is: {type(json_str_img_list)}, storage skipped')
     else:
-        return render_template("form.html")
+        return render_template("form1.html")
 
 '''
 Used by form to decode received student image via post method

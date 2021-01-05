@@ -39,61 +39,72 @@
  <body class="landing-page">
    <!-- Navbar -->
    <nav class="navbar navbar-expand-lg fixed-top navbar-transparent " color-on-scroll="100">
-     <div class="container">
-       <div class="navbar-translate">
-         <a class="navbar-brand" href="https://demos.creative-tim.com/blk-design-system/index.html" rel="tooltip" title="Designed and Coded by Creative Tim" data-placement="bottom" target="_blank">
-           <span>FEA•</span> Face Enabled Attendance System
-         </a>
-         <button class="navbar-toggler navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-           <span class="navbar-toggler-bar bar1"></span>
-           <span class="navbar-toggler-bar bar2"></span>
-           <span class="navbar-toggler-bar bar3"></span>
-         </button>
-       </div>
-       <div class="collapse navbar-collapse justify-content-end" id="navigation">
-         <div class="navbar-collapse-header">
-           <div class="row">
-             <div class="col-6 collapse-brand">
-               <a>
-                 FEA•
-               </a>
-             </div>
-             <div class="col-6 collapse-close text-right">
-               <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                 <i class="tim-icons icon-simple-remove"></i>
-               </button>
-             </div>
-           </div>
-         </div>
-         <ul class="navbar-nav">
-           <li class="nav-item p-0">
-             <a class="nav-link" rel="tooltip" title="Follow us on Twitter" data-placement="bottom" href="https://twitter.com/CreativeTim" target="_blank">
-               <i class="fab fa-twitter"></i>
-               <p class="d-lg-none d-xl-none">Twitter</p>
-             </a>
-           </li>
-           <li class="nav-item p-0">
-             <a class="nav-link" rel="tooltip" title="Like us on Facebook" data-placement="bottom" href="https://www.facebook.com/CreativeTim" target="_blank">
-               <i class="fab fa-facebook-square"></i>
-               <p class="d-lg-none d-xl-none">Facebook</p>
-             </a>
-           </li>
-           <li class="nav-item p-0">
-             <a class="nav-link" rel="tooltip" title="Follow us on Instagram" data-placement="bottom" href="https://www.instagram.com/CreativeTimOfficial" target="_blank">
-               <i class="fab fa-instagram"></i>
-               <p class="d-lg-none d-xl-none">Instagram</p>
-             </a>
-           </li>
-           <li class="nav-item">
-             <a class="nav-link" href="{{ url_for('base') }}">Home</a>
-           </li>
-           <li class="nav-item">
-             <a class="nav-link" href="https://github.com/creativetimofficial/blk-design-system/issues">Have an issue?</a>
-           </li>
-         </ul>
-       </div>
-     </div>
-   </nav> 
+    <div class="container">
+      <div class="navbar-translate">
+        <a class="navbar-brand" href="{{ url_for('base') }}" rel="tooltip" title="FEA• By Dakshta" data-placement="bottom" target="_blank">
+          <span>FEA•</span> Face Enabled Attendance System
+        </a>
+        <button class="navbar-toggler navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-bar bar1"></span>
+          <span class="navbar-toggler-bar bar2"></span>
+          <span class="navbar-toggler-bar bar3"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse justify-content-end" id="navigation">
+        <div class="navbar-collapse-header">
+          <div class="row">
+            <div class="col-6 collapse-brand">
+              <a>
+                FEA•
+              </a>
+            </div>
+            <div class="col-6 collapse-close text-right">
+              <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="tim-icons icon-simple-remove"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <ul class="navbar-nav">
+          <li class="nav-item p-0">
+            <a class="nav-link" rel="tooltip" title="Start taking attendance" data-placement="bottom" href="{{ url_for('attendance') }}"target="_blank">
+              <i class="tim-icons icon-badge"></i>
+              <p class="d-lg-none d-xl-none">Attendance</p>
+            </a>
+          </li>
+          <li class="nav-item p-0">
+            <a class="nav-link" rel="tooltip" title="Register a student" data-placement="bottom" href="{{ url_for('form') }}" target="_blank">
+              <i class="tim-icons icon-paper"></i>
+              <p class="d-lg-none d-xl-none">Register</p>
+            </a>
+          </li>
+          <li class="nav-item p-0">
+            <a class="nav-link" rel="tooltip" title="Upload student marks" data-placement="bottom" href="{{ url_for('upload') }}" target="_blank">
+              <i class="tim-icons icon-upload"></i>
+              <p class="d-lg-none d-xl-none">Upload</p>
+            </a>
+          </li>
+          <li class="dropdown nav-item">
+            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+              <i class="tim-icons icon-chart-bar-32"></i> Analyze
+            </a>
+            <div class="dropdown-menu dropdown-with-icons">
+              <a href="#" class="dropdown-item">
+                <i class="tim-icons icon-paper"></i> Marks
+              </a>
+              <a href="#" class="dropdown-item">
+                <i class="tim-icons icon-notes"></i>Attendance
+              </a>
+              <a href="#" class="dropdown-item">
+                <i class="tim-icons icon-bulb-63"></i>Project
+              </a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
    <!-- End Navbar -->
    <div class="wrapper">
      <div class="page-header">
@@ -107,7 +118,7 @@
          <div class="row row-grid justify-content-center align-items-center text-center">
            <div class="col-lg-6 col-md-6">
              <h1 class="text-white">Attendance
-               <br/>
+               
                <!-- <span class="text-white">secured</span> -->
              </h1>
              <p class="text-white mb-3">A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart. I am alone, and feel...</p>
@@ -115,13 +126,8 @@
             
            </div>
          </div>
-         <style>
-          body {
-              min-height: 100%;
-             
-          }
-        </style>
-         <body >
+
+         <body>
           {% block video_feed %}{% endblock %}
        </body>
 
