@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from flask.helpers import flash
+from mysql.connector.connection import MySQLConnection
 from requests.api import get
 from backend.mysqlConnector import MysqlConnector
 from flask import Flask, render_template, Response, redirect, url_for, request, jsonify
@@ -15,6 +16,7 @@ import os
 import json
 import face_recognition
 import requests
+import pprint
 
 # from vizApp import dashApp
 
@@ -130,10 +132,11 @@ def get_5_last_entries():
                 
 '''
 To upload students details and academic records
-'''
+
 @app.route("/upload")
 def upload():
     return render_template("upload/upload.html")
+'''
 
 '''
 Uploading marks
@@ -410,20 +413,88 @@ def get_attendees():
         attendees = conn.select(columnName = ['usn','fname'], tableName="attendance", where=f"sub_id = {subject}")
         return jsonify(attendees)
     
-# app.route("/viz", methods=["POST", "GET"])
-# def viz():
-    
-#     if request.method == "POST":
-#         logging.info(" POST request")
-#         usn = request.form.get("usn")
-#         project_id = request.form.get("project_id")
-#         project_marks = request.form.get("project_marks")
-#         where = f'usn = {usn}'
-#         conn = MysqlConnector()
-#         res=conn.select(tableName='students',columnName='usn',where=where)
+@app.route('/viz_attendance', methods=["POST", "GET"])
+def viz_attendance():
+    if request.method == 'POST':
+        branch = request.form.get("branch")
+        sem = request.form.get("semester") 
+        spec_date = request.form.get("date")
+        usn = request.form.get("usn")
         
-    
-    # return render_template("viz.html")
+        conn = MysqlConnector()
+        res = conn.select(columnName=['date_','count(distinct(attendance.usn))'], tableName=['attendance','students'], where=f"login_ is not null and branch='{branch.split(' ')[0]}' and sem='{sem}' ", groupBy='date_')
+        
+        date=[]
+        count=[]
+        for i in res:
+            date.append(i[0])
+            count.append(i[1])
+       
+        # json_data = json.dumps(
+        #     {
+        #         "date" : date.__str__(),
+        #         "count" : count
+        #     }
+        # )
+        if spec_date and usn:
+            
+            entries = conn.select(columnName='*', tableName='attendance', where= f"date_ = '{spec_date}' and usn='{usn}'") 
+            d={}   
+            usn=[]
+            login=[]
+            logout=[]
+            date=[]
+            sub_id=[]
+            for i in entries:
+                usn.append(i[0])
+                login.append(i[1])
+                logout.append(i[2])
+                date.append(i[3])
+                sub_id.append(i[4])
+            
+            d={
+                'usn':usn,
+                'login':login,
+                'logout':logout,
+                'date':date,
+                'sub_id':sub_id
+            }    
+            return render_template('viz/attendance.html',values=count,labels=date,spec_date=spec_date,entries=d) 
+            
+        elif spec_date:    
+            
+            d={}
+            entries = conn.select(columnName='*', tableName='attendance', where= f"date_ = '{spec_date}'")    
+            usn=[]
+            login=[]
+            logout=[]
+            date=[]
+            sub_id=[]
+            for i in entries:
+                usn.append(i[0])
+                login.append(i[1])
+                logout.append(i[2])
+                date.append(i[3])
+                sub_id.append(i[4])
+            
+            d={
+                'usn':usn,
+                'login':login,
+                'logout':logout,
+                'date':date,
+                'sub_id':sub_id
+            } 
+            return render_template('viz/attendance.html',values=count,labels=date,spec_date=spec_date,entries=d) 
+        
+            
+        return render_template('viz/attendance.html',values=count,labels=date,spec_date=spec_date) 
+        
+            
+    # jsonify({'payload':json_data})
+    return render_template('viz/attendance.html')
+   
+
+
 
 
 if __name__ == "__main__":
