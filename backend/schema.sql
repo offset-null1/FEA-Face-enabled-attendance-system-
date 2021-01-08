@@ -18,7 +18,9 @@ create table semesters (sem_id enum('1','2','3','4','5','6','7','8'),
                         sub_id char(8) PRIMARY KEY,
                         sub_name  varchar(60)
                         branch char(3),
-                        branch_name varchar(30));
+                        branch_name varchar(30)
+                        lab TINYINT(1),
+                        proj TINYINT(1));
 
 --independent
 /* create table branches (branch char(3) primary key,
@@ -49,12 +51,12 @@ create TABLE marks (usn varchar(20),
 
 -- create view stud_marks as SELECT 
 create table attendance (usn varchar(20),
-                         `login` TIMESTAMP,
+                         login_ TIMESTAMP,
                          logout TIMESTAMP, 
-                         `date` DATE,
+                         date_ DATE,
                          sub_id char(8) ,
-                         FOREIGN KEY(usn) REFERENCES students(usn),
-                         FOREIGN KEY(sub_id) REFERENCES semesters(sub_id));
+                         FOREIGN KEY(usn) REFERENCES students(usn) ON DELETE set null,
+                         FOREIGN KEY(sub_id) REFERENCES semesters(sub_id) on delete  set null);
 
 create view usn_embed as SELECT usn, embedding FROM `students` order by usn;
 
@@ -85,3 +87,7 @@ create table t_time_table(
     class_day ENUM('SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'),
     class_time TIME
 );
+
+-- get_attendance_date_branch_wise 
+select date_,count(distinct(attendance.usn)) from attendance,students where login_ is not null and students.branch=%s and sem=%s group by date_;
+

@@ -498,7 +498,7 @@ class MysqlConnector:
                     try:
                         # ofType = type(groupBy)
                         assert type(groupBy) is str
-                        query += "GROUP BY " + MysqlConnector.addTicks(groupBy)
+                        query += " GROUP BY " + MysqlConnector.addTicks(groupBy)
                     except AssertionError as err:
                         logging.critical(
                             f" Group by clause should be of type str or list but give type is :{type(groupBy)}"
@@ -779,7 +779,25 @@ class MysqlConnector:
 
 
 if __name__ == "__main__":
-    ...
-    
+    conn = MysqlConnector()
+    # d=[]
+    # c=[]
+    # a=[]
+    # b=[]
+    # e=[]
+    entries = conn.select(columnName='*', tableName='attendance', where= "date_ = '2021-01-07'")
+    # for i in entries:
+    #     a.append(i[0])
+    #     b.append(i[1])
+    #     c.append(i[2])
+    #     d.append(i[3])
+    #     e.append(i[4])
+    # pprint.pprint(a)
+    # pprint.pprint(b)
+    # pprint.pprint(c)
+    # pprint.pprint(d)
+    # pprint.pprint(e)
+    pprint.pprint(entries)
+  
 else:
     pass

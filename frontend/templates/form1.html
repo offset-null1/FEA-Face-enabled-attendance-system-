@@ -173,7 +173,7 @@
                       <h4 class="card-title">Register</h4>
                     </div>
                     <div class="card-body">
-                      <form class="form">
+                      <form class="form" action="{{ url_for('form') }}" method="POST" onsubmit="post()">
                         <label for="exampleFormControlInput1">USN</label>
                         <input type="text" class="form-control" placeholder="1SK...">
                   
