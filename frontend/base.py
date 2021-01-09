@@ -2,6 +2,7 @@
 from flask.helpers import flash
 from mysql.connector.connection import MySQLConnection
 from requests.api import get
+from werkzeug.datastructures import RequestCacheControl
 from backend.mysqlConnector import MysqlConnector
 from flask import Flask, render_template, Response, redirect, url_for, request, jsonify
 from backend.recognize import recognize, load_known_faces, camera
@@ -90,22 +91,22 @@ def attendance():
         conn = MysqlConnector()
         entries={}
         json_data = request.get_json()
-        # print(json_data)
-        usn_present_today = conn.select(columnName=['attendance.usn','students.fname'] , tableName=['attendance', 'students'], where=f" students.usn = '{json_data['usn']}' AND attendance.date = '{json_data['date']}' ")
+        print(json_data)
+        usn_present_today = conn.select(columnName=['attendance.usn','students.fname'] , tableName=['attendance', 'students'], where=f" students.usn = '{json_data['usn']}' AND attendance.date_ = '{json_data['date']}' ")
 
         if usn_present_today:
             update_usn = conn.update(execute=True, tableName='attendance', column={'logout': 'now()' }, where = f"usn = '{json_data['usn']}'")
         else:
-            insert_usn = conn.insert(execute=True, tableName='attendance', column={'usn': f" '{json_data['usn']}' ", 'date': f" '{json_data['date']}' ", 'login': 'now()' })
+            insert_usn = conn.insert(execute=True, tableName='attendance', column={'usn': f" '{json_data['usn']}' ", 'date_': f" '{json_data['date']}' ", 'login_': 'now()' })
             
         logging.debug(entries)
         conn.closeConnection()
     entries = get_5_last_entries()
-    
+    print(entries)
         #return details along
     return render_template("video_feed.html", entry=entries)
     # else:    
-        # return render_template("video_feed.html")
+    # return render_template("video_feed.html")
 
 ''' 
 To display last 5 attendees 
@@ -115,7 +116,7 @@ def get_5_last_entries():
     answers_to_send = {}
     conn = MysqlConnector()
     cols = ['usn','name','login','logout', 'sem']
-    last_entries = conn.select(columnName = ['distinct(attendance.usn)','fname', 'login' ,'logout','sem'] , tableName = ['attendance','students'], where='attendance.usn=students.usn' ,orderBy = 'usn DESC LIMIT 5')
+    last_entries = conn.select(columnName = ['distinct(attendance.usn)','fname', 'login_' ,'logout','sem'] , tableName = ['attendance','students'], where='attendance.usn=students.usn' ,orderBy = 'usn DESC LIMIT 5')
     
     #{0: {'usn': '', 'name': '', 'login': '', 'logout': ''}, 1: {'usn': '', 'name': '', 'login': '','logout': ''}, 2: {...}, ...}
     if last_entries:         
@@ -150,7 +151,7 @@ def marks():
         assign_marks = request.form.get("assign_marks")
         ia_no = request.form.get("ia_no")
         ia_marks = request.form.get("ia_marks")
-        project_id = request.form.get("project_id")
+        sub_id = request.form.get("sub_id")
         project_marks = request.form.get("project_marks")
         lab_id = request.form.get("lab_id")
         lab_marks = request.form.get("lab_marks")
@@ -163,18 +164,44 @@ def marks():
        
             conn.insert(
                 execute=True,
-                tableName="marks",
+                tableName="ia_marks",
                 column={
                     "usn": usn,
-                    "assign_id": assign_id,
-                    "assign_marks": assign_marks,
                     "ia_no": ia_no,
-                    "ia_marks": ia_marks,
-                    "project_id": project_id,
-                    "project_marks": project_marks,
-                    "lab_id": lab_id,
-                    "lab_marks": lab_marks,
-                },
+                    "marks": ia_marks,
+                    "sub_id":sub_id
+                }
+            )
+            
+            conn.insert(
+                execute=True,
+                tableName="assignment_marks",
+                column={
+                    "usn": usn,
+                    "assignment_id": assign_id,
+                    "marks": assign_marks,
+                    "sub_id":sub_id
+                }
+            )
+            
+            conn.insert(
+                execute=True,
+                tableName="lab_marks",
+                column={
+                    "usn": usn,
+                    "marks": lab_marks,
+                    "sub_id":sub_id
+                }
+            )
+            
+            conn.insert(
+                execute=True,
+                tableName="project_marks",
+                column={
+                    "usn": usn,
+                    "marks": project_marks,
+                    "sub_id":sub_id
+                }
             )
             
             res = conn.select(columnName="*", tableName="students")
@@ -200,16 +227,22 @@ def assign():
         logging.info(" POST request")
         usn = request.form.get("usn")
         assign_id = request.form.get("assign_id")
+        sub_id = request.form.get("sub_id")
         assign_marks = request.form.get("assign_marks")
         where = f'usn = {usn}'
         conn = MysqlConnector()
         res=conn.select(tableName='students',columnName='usn',where=where)
         
         if res:
-            res=conn.insert(
+            conn.insert(
                 execute=True,
-                tableName="marks",
-                column={"usn": usn, "assign_id": assign_id, "assign_marks": assign_marks},
+                tableName="assignment_marks",
+                column={
+                    "usn": usn,
+                    "assignment_id": assign_id,
+                    "marks": assign_marks,
+                    "sub_id":sub_id
+                }
             )
             res = conn.select(columnName="*", tableName="students")
             conn.closeConnection()
@@ -232,6 +265,7 @@ def ia():
     if request.method == "POST":
         logging.info(" POST request")
         usn = request.form.get("usn")
+        sub_id = request.form.get("sub_id")
         ia_no = request.form.get("ia_no")
         ia_marks = request.form.get("ia_marks")
         where = f'usn = {usn}'
@@ -239,10 +273,15 @@ def ia():
         res=conn.select(tableName='students',columnName='usn',where=where)
        
         if res:
-            res=conn.insert(
+            conn.insert(
                 execute=True,
-                tableName="marks",
-                column={"usn": usn, "ia_no": ia_no, "ia_marks": ia_marks},
+                tableName="ia_marks",
+                column={
+                    "usn": usn,
+                    "ia_no": ia_no,
+                    "marks": ia_marks,
+                    "sub_id":sub_id
+                }
             )
             res = conn.select(columnName="*", tableName="students")
             conn.closeConnection()
@@ -265,20 +304,20 @@ def project():
     if request.method == "POST":
         logging.info(" POST request")
         usn = request.form.get("usn")
-        project_id = request.form.get("project_id")
+        sub_id = request.form.get("sub_id")
         project_marks = request.form.get("project_marks")
         where = f'usn = {usn}'
         conn = MysqlConnector()
         res=conn.select(tableName='students',columnName='usn',where=where)
         if res:
-            res=conn.insert(
+            conn.insert(
                 execute=True,
-                tableName="marks",
+                tableName="project_marks",
                 column={
                     "usn": usn,
-                    "project_id": project_id,
-                    "project_marks": project_marks,
-                },
+                    "marks": project_marks,
+                    "sub_id":sub_id
+                }
             )
             res = conn.select(columnName="*", tableName="students")
             conn.closeConnection()
@@ -301,7 +340,7 @@ def lab():
     if request.method == "POST":
         logging.info(" POST request")
         usn = request.form.get("usn")
-        lab_id = request.form.get("lab_id")
+        sub_id = request.form.get("sub_id")
         lab_marks = request.form.get("lab_marks")
         where = f'usn = {usn}'
         conn = MysqlConnector()
@@ -309,8 +348,12 @@ def lab():
         if res:
             conn.insert(
                 execute=True,
-                tableName="marks",
-                column={"usn": usn, "lab_id": lab_id, "lab_marks": lab_marks},
+                tableName="lab_marks",
+                column={
+                    "usn": usn,
+                    "marks": lab_marks,
+                    "sub_id":sub_id
+                }
             )
             res = conn.select(columnName="*", tableName="students")
             conn.closeConnection()
@@ -422,6 +465,7 @@ def viz_attendance():
         usn = request.form.get("usn")
         
         conn = MysqlConnector()
+        
         res = conn.select(columnName=['date_','count(distinct(attendance.usn))'], tableName=['attendance','students'], where=f"login_ is not null and branch='{branch.split(' ')[0]}' and sem='{sem}' ", groupBy='date_')
         
         date=[]
@@ -484,6 +528,7 @@ def viz_attendance():
                 'date':date,
                 'sub_id':sub_id
             } 
+            conn.closeConnection()
             return render_template('viz/attendance.html',values=count,labels=date,spec_date=spec_date,entries=d) 
         
             
@@ -493,9 +538,55 @@ def viz_attendance():
     # jsonify({'payload':json_data})
     return render_template('viz/attendance.html')
    
+@app.route('/viz_marks',methods=['GET','POST'])
+def viz_marks():
+    if request.method == 'POST':
+        conn = MysqlConnector()
+        usn = request.form.get('usn')
+        ia = request.form.get('ia')
+        assign = request.form.get('assign')
+        sub = request.form.get('sub')
+        sub_name = conn.select(columnName='sub_name', tableName='semesters', where=f"sub_id='{sub}' ")
+        print(sub_name)
+        marks=[]
+        labels=['Assignment','Internal Assessment','Lab','Project']
+        if usn and ia and assign and sub:
+            res = conn.select(columnName='marks',tableName='assignment_marks',where=f" sub_id='{sub}' and usn='{usn}' and assignment_id='{assign}'")
+            if res:
+                marks.append(res[0][0])
+            res1 = conn.select(columnName='distinct(marks)',tableName='ia_marks',where=f"sub_id='{sub}' and usn='{usn}' and ia_no='{ia}' ")
+            if res1:
+                marks.append(res1[0][0])
+            res2 = conn.select(columnName='marks',tableName='lab_marks',where=f"sub_id='{sub}' and usn='{usn}'")
+            if res2:
+               marks.append(res2[0][0])
+            res3 = conn.select(columnName='marks',tableName='project_marks',where=f"sub_id='{sub}' and usn='{usn}'")
+            if res3:
+               marks.append(res3[0][0])
+            conn.closeConnection()
+            return render_template('viz/marks.html',values=marks, labels=labels,sub_name=sub_name)
+    return render_template('viz/marks.html')
 
-
-
-
+# @app.route('/viz_student',methods=['GET','POST'])
+# def viz_student():
+#     if request.method=="POST":
+#         usn=request.form.get('usn')
+#         sub_id=request.form.get('sub')
+#         ia_no=request.form.get('ia')
+#         assign_id=request.form.get('assign')
+        
+        
+#         conn = MysqlConnector()
+#         d={}
+#         l=['usn','fname','lname','email','phone_no','sem','branch','usn','login','logout','date','sub_id','usn','sub_id','assign_no','assign_marks','usn','sub_id','ia_no','ia_marks','usn','sub_id','lab_marks','usn','sub_id','project_marks']
+#         attend_count = conn.select(columnName='count(*)',tableName='attendance',where= f"'usn={usn}'")
+#         res=conn.select(columnName='*', tableName='students', inner_join=f"attendance on students.usn=attendance.usn inner join assignment_marks on students.usn=assignment_marks.usn inner join ia_marks on students.usn=ia_marks.usn inner join lab_marks on students.usn=lab_marks.usn inner join project_marks on students.usn=project_marks.usn where students.usn='{usn}' and sub_id'{sub_id}' ia_no={ia_no} assignment_id={assign_id}")
+#         for i,j in enumerate(res):
+#             dd={}
+#             for label,data in zip(l,j):
+#                 dd[label]=data
+#             d[i]=dd
+#         return render_template('viz/student_details.html',d=d, attend_count=attend_count)
+#     return render_template('viz/student_details.html')
 if __name__ == "__main__":
     app.run(debug=True)

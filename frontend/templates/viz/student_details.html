@@ -133,46 +133,47 @@
       <div class="squares square-4"></div>
       <div class="row row-grid justify-content-between align-items-center">
       <div class="col-lg-6">
-          <form action="{{ url_for('viz_attendance') }}" method="POST"> 
+          <form action="{{ url_for('viz_marks') }}" method="POST"> 
           
            <fieldset>
-             <legend>Select the options </legend>
-          
-             <div class="form-group">
-               <label for="ia_no">Branch</label>
-               <select class="form-control" name="branch" id="branch" required>
-                   <option>CSE ComputerScience</option>
-                   <option>ECE Electronics&Communication</option>
-                   <option>CE Civil</option>
-                   <option>ME Mechanical</option>
-                   <option>TE Textile</option>
-                 </select>
-             </div>
-           
-             <div class="form-group">
-               <label for="ia_no">Semester</label>
-               <select class="form-control" name="semester" id="semester">
-                 <option>1</option>
-                 <option>2</option>
-                 <option>3</option>
-                 <option>4</option>
-                 <option>5</option>
-                 <option>6</option>
-                 <option>7</option>
-              
-               </select>
-             </div>
+             <legend>Enter the options </legend>
 
-             <div class="form-group">
-              <label for="usn">Enter the Date </label>
-              <input type="text" name="date" class="form-control" id="date"  placeholder="yyyy-mm-dd" >
-              <small id="emailHelp" class="form-text text-muted">To get the specific day attendance(can be left empty).</small>
-            </div>
             <div class="form-group">
               <label for="usn">USN </label>
-              <input type="text" name="usn" class="form-control" id="usn"  placeholder="1SK.." >
-              <small id="emailHelp" class="form-text text-muted">To get the specific usn attendance(can be left empty).</small>
+              <input type="text" name="usn" class="form-control" id="usn"  placeholder="1SK.." required>
+              <small id="emailHelp" class="form-text text-muted">To get the specific USN marks</small>
             </div>
+
+            <div class="form-group">
+              <label for="usn">Subject ID </label>
+              <input type="text" name="sub" class="form-control" id="sub" required>
+              <small id="emailHelp" class="form-text text-muted">To get the specific USN marks</small>
+            </div>
+
+            <div class="form-group">
+              <label for="ia_no">IA Number</label>
+              <select class="form-control" name="ia" id="ia" required>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+             
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="ia_no">Assignment Number</label>
+              <select class="form-control" name="assign" id="assign" required>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+             
+              </select>
+            </div>
+            
            </fieldset>
            <button type="submit" id='submit' class="btn btn-primary" >Submit</button>
            </fieldset>
@@ -187,8 +188,8 @@
                  <div class="row">
                    <div class="col-sm-6 text-left">
                      <hr class="line-primary">
-                     <h5 class="card-category">Attendance</h5>
-                     <h2 class="card-title">updates</h2>
+                     <h5 class="card-category">{{ fname }} {{ lname }}</h5>
+                     <h2 class="card-title">{{ usn }} updates</h2>
                    </div>
                  </div>
                </div>
@@ -205,63 +206,60 @@
     </div>
    </div>
   
-    {% if spec_date and usn and entries%}
-        <table class="table">
-          <thead>
-              <tr>
-                  <th class="text-center">#</th>
-                  <th>USN</th>
-                  <th>Login</th>
-                  <th>Logout</th>
-                  <th>Date</th>
-                  <th>SubID</th>
-              </tr>
-          </thead>
-          <tbody>
-            {% for i in range(entries['usn']|length) %}
-              <tr>
-                  <td class="text-center">•</td>
-                  <td>{{ entries[0][0]}}</td>
-                  <td>{{ entries[0][1]}}</td>
-                  <td>{{ entries[0][2]}}</td>
-                  <td>{{ entries[0][3]}}</td>
-                  <td>{{ entries[0][4]}}</td>
+   {% if d %}
+    <table class="table">
+      <thead>
+          <tr>
+              <th class="text-center">#</th>
+              <th>USN</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email</th>
+              <th>Phone Number</th>
+              <th>Semester</th>
+              <th>Branch</th>
+              <th>Logins</th>
+              <th>Logouts</th>
+              <th>Subject ID</th>
+              <th>Assignment Number</th>
+              <th>Marks</th>
+              <th>Internal Assessment</th>
+              <th>Marks</th>
+              <th>Laboratory Marks</th>
+              <th>Project Marks</th>
               
-              
-              </tr> 
-            {% endfor %}
+          </tr>
+      </thead>
+      <tbody>
+        {% for i in range(d|length) %}
+         <tr>
+             <td class="text-center">•</td>
+             
+             <td>{{ d[i]['usn'] }}</td>
+             <td>{{ d[i]['fname'] }}</td>
+             <td>{{ d[i]['lname'] }}</td>
+             <td>{{ d[i]['email'] }}</td>
+             <td>{{ d[i]['phone_no'] }}</td>
+             <td>{{ d[i]['sem'] }}</td>
+             <td>{{ d[i]['branch'] }}</td>
+             <td>{{ d[i]['login'] }}</td>
+             <td>{{ d[i]['logout'] }}</td>
+             <td>{{ d[i]['sub_id'] }}</td>
+             <td>{{ d[i]['assign_no'] }}</td>
+             <td>{{ d[i]['assign_marks'] }}</td>
+             <td>{{ d[i]['ia_no'] }}</td>
+             <td>{{ d[i]['ia_marks'] }}</td>
+             <td>{{ d[i]['lab_marks'] }}</td>
+             <td>{{ d[i]['project_marks'] }}</td>
+    
+         </tr> 
+        {% endfor %}
 
-            
-          </tbody>
-        </table>
-    {% elif spec_date and entries and not usn %}
-        <table class="table">
-                 <thead>
-                     <tr>
-                         <th class="text-center">#</th>
-                         <th>USN</th>
-                         <th>Login</th>
-                         <th>Logout</th>
-                         <th>Date</th>
-                         <th>SubID</th>
-                     </tr>
-                 </thead>
-                 <tbody>
-                      {% for i in range(entries['usn']|length) %}
-                     <tr>
-                         <td class="text-center">{{i}}</td>
-                         <td>{{ entries['usn'][i]}}</td>
-                         <td>{{ entries['login'][i]}}</td>
-                         <td>{{ entries['logout'][i]}}</td>
-                         <td>{{ entries['date'][i]}}</td>
-                         <td>{{ entries['sub_id'][i]}}</td>
-                     </tr> 
-                      {% endfor %}
-                   
-                 </tbody>
-             </table>
+       
+     </tbody>
+   </table>
 
-    {% endif %}
+{% endif %}
    
    
 
@@ -349,13 +347,11 @@ gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
 gradientFill.addColorStop(1, "rgba(249, 99, 59, 0.40)");
 
 myChart = new Chart(ctx, {
-    type: 'line',
+    type: 'bar',
     data: {
-        labels: [{% for item in labels %}
-                       "{{item}}",
-                      {% endfor %}],
+        labels: ['Attendance','Assignment Marks','Internal Assessment Marks','Lab Marks','Project Marks'],
         datasets: [{
-            label: "Attendance",
+            label: "Analysis",
             borderColor: "#f96332",
             pointBorderColor: "#FFF",
             pointBackgroundColor: "#f96332",
@@ -366,9 +362,7 @@ myChart = new Chart(ctx, {
             fill: true,
             backgroundColor: gradientFill,
             borderWidth: 2,
-            data:  [{% for item in values %}
-                  {{item}},
-              {% endfor %}]
+            data:  [{{ attend_count }},{{ d['assign_marks'] }},{{ d['ia_marks'] }}, {{ d['lab_marks'] }}, {{ d['project_marks'] }}]
           }]
         },
     options: gradientChartOptionsConfiguration
