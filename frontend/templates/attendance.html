@@ -79,24 +79,39 @@
             </a>
           </li>
           <li class="nav-item p-0">
-            <a class="nav-link" rel="tooltip" title="Upload student marks" data-placement="bottom" href="{{ url_for('upload') }}" target="_blank">
-              <i class="tim-icons icon-upload"></i>
-              <p class="d-lg-none d-xl-none">Upload</p>
-            </a>
+            <li class="dropdown nav-item">
+              <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">    
+                <i class="tim-icons icon-upload"></i></i> Upload Marks
+              </a>
+              <div class="dropdown-menu dropdown-with-icons">
+                <a href="{{ url_for('marks') }}" class="dropdown-item">
+                  <i class="tim-icons icon-paper"></i> All
+                </a>
+                <a href="{{ url_for('assign') }}" class="dropdown-item">
+                  <i class="tim-icons icon-notes"></i>Assignment
+                </a>
+                <a href="{{ url_for('project') }}" class="dropdown-item">
+                  <i class="tim-icons icon-bulb-63"></i>Project
+                </a>
+                <a href="{{ url_for('ia') }}" class="dropdown-item">
+                  <i class="tim-icons icon-pencil"></i> IA
+                </a>
+                <a href="{{ url_for('lab') }}" class="dropdown-item">
+                  <i class="tim-icons icon-laptop"></i> Lab
+                </a>
+              </div>
+            </li>
           </li>
           <li class="dropdown nav-item">
             <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
               <i class="tim-icons icon-chart-bar-32"></i> Analyze
             </a>
             <div class="dropdown-menu dropdown-with-icons">
-              <a href="#" class="dropdown-item">
+              <a href="{{ url_for('viz_marks') }}" class="dropdown-item">
                 <i class="tim-icons icon-paper"></i> Marks
               </a>
-              <a href="#" class="dropdown-item">
+              <a href="{{ url_for('viz_attendance') }}" class="dropdown-item">
                 <i class="tim-icons icon-notes"></i>Attendance
-              </a>
-              <a href="#" class="dropdown-item">
-                <i class="tim-icons icon-bulb-63"></i>Project
               </a>
             </div>
           </li>
@@ -117,11 +132,10 @@
        <div class="content-center">
          <div class="row row-grid justify-content-center align-items-center text-center">
            <div class="col-lg-6 col-md-6">
-             <h1 class="text-white">Attendance
+             <!-- <h1 class="text-white">Attendance -->
                
                <!-- <span class="text-white">secured</span> -->
-             </h1>
-             <p class="text-white mb-3">A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart. I am alone, and feel...</p>
+             <!-- </h1> -->
               
             
            </div>
@@ -131,11 +145,11 @@
           {% block video_feed %}{% endblock %}
        </body>
 
-       <div class="btn-wrapper mb-3">
+       <!-- <div class="btn-wrapper mb-3">
 
         <p class="category text-success d-inline">Any issues? Mark attendance manually</p>
         <a href="#blk" class="btn btn-success btn-link btn-sm"><i class="tim-icons icon-minimal-right"></i></a>
-      </div>
+      </div> -->
        </div>
      </div>
    </div>

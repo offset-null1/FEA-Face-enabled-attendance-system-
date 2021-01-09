@@ -27,24 +27,56 @@ create table semesters (sem_id enum('1','2','3','4','5','6','7','8'),
                        branch_name varchar(30)); */
 
 
-create table in_sub_categories( sub_id CHAR(8),
-                               assignment_id varchar(10),
-                               project_id varchar(10),
-                               lab_id varchar(10),
-                               FOREIGN KEY(sub_id) REFERENCES semesters(sub_id),
-                               unique(assignment_id,project_id,lab_id));
+-- create table in_sub_categories( sub_id CHAR(8),
+--                                assignment_id varchar(10),
+--                                project_id varchar(10),
+--                                lab_id varchar(10),
+--                                FOREIGN KEY(sub_id) REFERENCES semesters(sub_id),
+--                                unique(assignment_id,project_id,lab_id));
 
-create TABLE marks (usn varchar(20),
+-- create TABLE marks (usn varchar(20),
+--                     assignment_id varchar(10),
+--                     assignment_marks FLOAT,
+--                     project_id varchar(10),
+--                     project_marks FLOAT,
+--                     lab_id varchar(10),
+--                     lab_marks FLOAT,
+--                     ia_no INT,
+--                     ia_marks FLOAT,
+--                     foreign key(usn) REFERENCES students(usn),
+--                     foreign key(assignment_id, project_id,lab_id) REFERENCES in_sub_categories(assignment_id,project_id,lab_id));
+
+create TABLE assignment_marks (usn varchar(20),
+                    sub_id CHAR(8),
                     assignment_id varchar(10),
-                    assignment_marks FLOAT,
-                    project_id varchar(10),
-                    project_marks FLOAT,
+                    marks FLOAT,
+                    foreign key(usn) REFERENCES students(usn) ON DELETE CASCADE,
+                    foreign key(sub_id) REFERENCES semesters(sub_id) ON DELETE CASCADE);
+
+
+create TABLE project_marks (usn varchar(20),
+                    sub_id char(8),
+                    marks FLOAT,
+                    foreign key(usn) REFERENCES students(usn) ON DELETE CASCADE,
+                    foreign key(sub_id) REFERENCES semesters(sub_id) ON DELETE CASCADE);
+
+
+create TABLE lab_marks (usn varchar(20),
+                    sub_id CHAR(8),
                     lab_id varchar(10),
-                    lab_marks FLOAT,
+                    marks FLOAT,
+                    foreign key(usn) REFERENCES students(usn) on DELETE cascade,
+                    foreign key(sub_id) REFERENCES semesters(sub_id) on DELETE cascade);
+
+
+create TABLE ia_marks (usn varchar(20),
+                    sub_id CHAR(8),
                     ia_no INT,
-                    ia_marks FLOAT,
-                    foreign key(usn) REFERENCES students(usn),
-                    foreign key(assignment_id, project_id,lab_id) REFERENCES in_sub_categories(assignment_id,project_id,lab_id));
+                    marks FLOAT,
+                    foreign key(usn) REFERENCES students(usn) on delete cascade,
+                    foreign key(sub_id) REFERENCES semesters(sub_id) ON DELETE cascade);
+
+
 
 
 -- create view stud_sub as select sub_id,sub_name from semesters inner join students on semesters.sem_id =students.sem_id;

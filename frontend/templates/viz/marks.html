@@ -106,19 +106,19 @@
               </a>
             </div>
           </li>
-           <li class="dropdown nav-item">
-             <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">    
-               <i class="tim-icons icon-chart-bar-32"></i> Analyze
-             </a>
-             <div class="dropdown-menu dropdown-with-icons">
-               <a href="{{ url_for('viz_marks') }}" class="dropdown-item">
-                 <i class="tim-icons icon-paper"></i> Marks
-               </a>
-               <a href="{{ url_for('viz_attendance') }}" class="dropdown-item">
-                 <i class="tim-icons icon-notes"></i>Attendance
-               </a>
-             </div>
-           </li>
+          <li class="dropdown nav-item">
+            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">    
+              <i class="tim-icons icon-chart-bar-32"></i> Analyze
+            </a>
+            <div class="dropdown-menu dropdown-with-icons">
+              <a href="{{ url_for('viz_marks') }}" class="dropdown-item">
+                <i class="tim-icons icon-paper"></i> Marks
+              </a>
+              <a href="{{ url_for('viz_attendance') }}" class="dropdown-item">
+                <i class="tim-icons icon-notes"></i>Attendance
+              </a>
+            </div>
+          </li>
          </ul>
        </div>
      </div>
@@ -133,52 +133,53 @@
       <div class="squares square-4"></div>
       <div class="row row-grid justify-content-between align-items-center">
       <div class="col-lg-6">
-          <form action="{{ url_for('viz_attendance') }}" method="POST"> 
+          <form action="{{ url_for('viz_marks') }}" method="POST"> 
           
            <fieldset>
-             <legend>Select the options </legend>
-          
-             <div class="form-group">
-               <label for="ia_no">Branch</label>
-               <select class="form-control" name="branch" id="branch" required>
-                   <option>CSE ComputerScience</option>
-                   <option>ECE Electronics&Communication</option>
-                   <option>CE Civil</option>
-                   <option>ME Mechanical</option>
-                   <option>TE Textile</option>
-                 </select>
-             </div>
-           
-             <div class="form-group">
-               <label for="ia_no">Semester</label>
-               <select class="form-control" name="semester" id="semester">
-                 <option>1</option>
-                 <option>2</option>
-                 <option>3</option>
-                 <option>4</option>
-                 <option>5</option>
-                 <option>6</option>
-                 <option>7</option>
-              
-               </select>
-             </div>
+             <legend>Enter the options </legend>
 
-             <div class="form-group">
-              <label for="usn">Enter the Date </label>
-              <input type="text" name="date" class="form-control" id="date"  placeholder="yyyy-mm-dd" >
-              <small id="emailHelp" class="form-text text-muted">To get the specific day attendance(can be left empty).</small>
-            </div>
             <div class="form-group">
               <label for="usn">USN </label>
-              <input type="text" name="usn" class="form-control" id="usn"  placeholder="1SK.." >
-              <small id="emailHelp" class="form-text text-muted">To get the specific usn attendance(can be left empty).</small>
+              <input type="text" name="usn" class="form-control" id="usn"  placeholder="1SK.." required>
+              <small id="emailHelp" class="form-text text-muted">To get the specific USN marks</small>
             </div>
+
+            <div class="form-group">
+              <label for="usn">Subject ID </label>
+              <input type="text" name="sub" class="form-control" id="sub" required>
+              <small id="emailHelp" class="form-text text-muted">To get the specific USN marks</small>
+            </div>
+
+            <div class="form-group">
+              <label for="ia_no">IA Number</label>
+              <select class="form-control" name="ia" id="ia" required>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+             
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="ia_no">Assignment Number</label>
+              <select class="form-control" name="assign" id="assign" required>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+             
+              </select>
+            </div>
+            
            </fieldset>
            <button type="submit" id='submit' class="btn btn-primary" >Submit</button>
            </fieldset>
           </form>
 
-
+        
           <section class="section section-lg">
            <img src="{{ url_for('static',filename='assets/img/path4.png')}}" class="path">
            <div class="col-md-12">
@@ -187,7 +188,9 @@
                  <div class="row">
                    <div class="col-sm-6 text-left">
                      <hr class="line-primary">
-                     <h5 class="card-category">Attendance</h5>
+                     {% if sub_name %}
+                     <h5 class="card-category">{{ sub_name[0][0] }} Marks</h5>
+                     {% endif %}
                      <h2 class="card-title">updates</h2>
                    </div>
                  </div>
@@ -205,63 +208,38 @@
     </div>
    </div>
   
-    {% if spec_date and usn and entries%}
-        <table class="table">
-          <thead>
-              <tr>
-                  <th class="text-center">#</th>
-                  <th>USN</th>
-                  <th>Login</th>
-                  <th>Logout</th>
-                  <th>Date</th>
-                  <th>SubID</th>
-              </tr>
-          </thead>
-          <tbody>
-            {% for i in range(entries['usn']|length) %}
-              <tr>
-                  <td class="text-center">•</td>
-                  <td>{{ entries[0][0]}}</td>
-                  <td>{{ entries[0][1]}}</td>
-                  <td>{{ entries[0][2]}}</td>
-                  <td>{{ entries[0][3]}}</td>
-                  <td>{{ entries[0][4]}}</td>
+   {% if values %}
+    <table class="table">
+      <thead>
+          <tr>
+              <th class="text-center">#</th>
+              <th>Assignment</th>
+              <th>Internal Assessment</th>
+              <th>Laboratory</th>
+              <th>Project</th>
               
-              
-              </tr> 
-            {% endfor %}
+          </tr>
+      </thead>
+      <tbody>
+      
+         <tr>
+             <td class="text-center">•</td>
+             
+             <td>{{ values[0]}}</td>
+             <td>{{ values[1]}}</td>
+             <td>{{ values[2]}}</td>
+             <td>{{ values[3]}}</td>
+             
+         
+         
+         </tr> 
 
-            
-          </tbody>
-        </table>
-    {% elif spec_date and entries and not usn %}
-        <table class="table">
-                 <thead>
-                     <tr>
-                         <th class="text-center">#</th>
-                         <th>USN</th>
-                         <th>Login</th>
-                         <th>Logout</th>
-                         <th>Date</th>
-                         <th>SubID</th>
-                     </tr>
-                 </thead>
-                 <tbody>
-                      {% for i in range(entries['usn']|length) %}
-                     <tr>
-                         <td class="text-center">{{i}}</td>
-                         <td>{{ entries['usn'][i]}}</td>
-                         <td>{{ entries['login'][i]}}</td>
-                         <td>{{ entries['logout'][i]}}</td>
-                         <td>{{ entries['date'][i]}}</td>
-                         <td>{{ entries['sub_id'][i]}}</td>
-                     </tr> 
-                      {% endfor %}
-                   
-                 </tbody>
-             </table>
 
-    {% endif %}
+       
+     </tbody>
+   </table>
+
+{% endif %}
    
    
 
@@ -355,7 +333,7 @@ myChart = new Chart(ctx, {
                        "{{item}}",
                       {% endfor %}],
         datasets: [{
-            label: "Attendance",
+            label: "Marks",
             borderColor: "#f96332",
             pointBorderColor: "#FFF",
             pointBackgroundColor: "#f96332",
