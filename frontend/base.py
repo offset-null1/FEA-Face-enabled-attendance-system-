@@ -1,23 +1,16 @@
 #!/usr/bin/python3
 from flask.helpers import flash
-from mysql.connector.connection import MySQLConnection
-from requests.api import get
-from werkzeug.datastructures import RequestCacheControl
 from backend.mysqlConnector import MysqlConnector
 from flask import Flask, render_template, Response, redirect, url_for, request, jsonify
 from backend.recognize import recognize, load_known_faces, camera
-from backend.storage import Storage
-import json
 import base64
 import logging
 import numpy as np
 import cv2
 import sys
 import os
-import json
-import face_recognition
-import requests
-import pprint
+
+
 
 # from vizApp import dashApp
 
@@ -91,7 +84,7 @@ def attendance():
         conn = MysqlConnector()
         entries={}
         json_data = request.get_json()
-        print(json_data)
+        # print(json_data)
         usn_present_today = conn.select(columnName=['attendance.usn','students.fname'] , tableName=['attendance', 'students'], where=f" students.usn = '{json_data['usn']}' AND attendance.date_ = '{json_data['date']}' ")
 
         if usn_present_today:
@@ -102,7 +95,7 @@ def attendance():
         logging.debug(entries)
         conn.closeConnection()
     entries = get_5_last_entries()
-    print(entries)
+    # print(entries)
         #return details along
     return render_template("video_feed.html", entry=entries)
     # else:    
@@ -158,7 +151,7 @@ def marks():
         where = f'trim(usn)="{usn}"'
         
         res=conn.select(tableName='students',columnName='usn',where=where)
-        print(res)
+        # print(res)
         
         if res is not None:
        
@@ -377,7 +370,7 @@ def form():
 
     if request.method == "POST":
         logging.info(" POST request")
-        json_str_img_list = request.form.get("img")
+        img_b64_list = request.form.get("canvas")
         usn = request.form.get("usn")
         fname = request.form.get("fname")
         lname = request.form.get("lname")
@@ -385,50 +378,41 @@ def form():
         phone_no = request.form.get("phone_no")
         semester = request.form.get("semester")
         branch = request.form.get("branch")
+       
+        logging.info(f' Received image set length: {len(img_b64_list)}')
+
         
-        if json_str_img_list is not None:
-            img_b64_list = json.loads(json_str_img_list)
-            logging.info(f' Received image set length: {len(img_b64_list)}')
+        np_img = decode(img_data=img_b64_list)
+       
+        rgb_image = np_img[:, :, ::-1] 
+        fileName=f"./images/{branch.split(' ')[0]}/{semester}/{usn}.jpg"
+        if not os.path.exists(fileName):
+            os.makedirs(fileName)
+        cv2.imwrite(fileName,rgb_image)
 
-            embeddings=[]
-            for img in img_b64_list:
-                np_img = decode(img_data=img)
-                # cv2.imshow('img',np_img)
-                # cv2.waitKey(0)
-                face_picture = face_recognition.load_image_file(np_img)
-                face_locations = face_recognition.face_locations(face_picture)
-                face_encodings = face_recognition.face_encodings(face_picture,face_locations)
-                embeddings.append(face_encodings)
-        
-            b = branch.split(" ")[0]
-            print(b)
-            store = Storage(branch=branch.split(" ")[0], sem=semester)
-            file = store.write_bytes(data=embeddings, usn=usn)
+        conn=MysqlConnector()
+        res=conn.insert(
+            execute=True,
+            tableName="students",
+            column={
+                "usn": '"'+usn+'"',
+                "fname": '"'+fname+'"',
+                "lname": '"'+lname+'"',
+                "email": '"'+email+'"',
+                "phone_no": '"'+phone_no+'"',
+                "sem": '"'+semester+'"',
+                "branch": '"'+branch.split(" ")[0]+'"',
+                "status":"NULL"
+            },
+        )
+        res = conn.select(columnName="*", tableName="students")
+        conn.closeConnection()
+        logging.info(f" Results after commit: {res}")
+        logging.info(" Data received. Now redirecting ...")
 
-
-            conn=MysqlConnector()
-            res=conn.insert(
-                execute=True,
-                tableName="students",
-                column={
-                    "usn": usn,
-                    "fname": fname,
-                    "lname": lname,
-                    "email": email,
-                    "phone_no": phone_no,
-                    "semester": semester,
-                    "branch": branch,
-                    "embedding": file,
-                },
-            )
-            res = conn.select(columnName="*", tableName="students")
-            conn.closeConnection()
-            logging.info(f" Results after commit: {res}")
-            logging.info(" Data received. Now redirecting ...")
-
-            return redirect("form1.html")
-        else:
-            logging.critical(f' Loaded json is: {type(json_str_img_list)}, storage skipped')
+        return redirect("form")
+        # else:
+            # logging.critical(f' Loaded json is: {type(json_str_img_list)}, storage skipped')
     else:
         return render_template("form1.html")
 
@@ -547,7 +531,7 @@ def viz_marks():
         assign = request.form.get('assign')
         sub = request.form.get('sub')
         sub_name = conn.select(columnName='sub_name', tableName='semesters', where=f"sub_id='{sub}' ")
-        print(sub_name)
+        # print(sub_name)
         marks=[]
         labels=['Assignment','Internal Assessment','Lab','Project']
         if usn and ia and assign and sub:
