@@ -8,7 +8,7 @@ create table students (
     phone_no CHAR(11),
     sem enum(1,2,3,4,5,6,7,8),
     branch VARCHAR(4),
-    embedding VARCHAR(20),
+    status_ bool ,
     constraint mail_ph unique(email,phone_no)
 );
 
