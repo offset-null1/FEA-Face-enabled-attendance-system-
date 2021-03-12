@@ -90,13 +90,43 @@ create table attendance (usn varchar(20),
                          FOREIGN KEY(usn) REFERENCES students(usn) ON DELETE set null,
                          FOREIGN KEY(sub_id) REFERENCES semesters(sub_id) on delete  set null);
 
+<<<<<<< HEAD
 
+=======
+create view usn_embed as SELECT usn, embedding FROM `students` order by usn;
+>>>>>>> dev
 
 
 ---------------------------------------------------
 
 
+<<<<<<< HEAD
 
+=======
+create TABLE teachers(
+    t_id varchar(20) PRIMARY KEY,
+    fname VARCHAR(10) NOT NULL,
+    lname VARCHAR(10) NOT NULL,
+    email VARCHAR(20) NOT NULL,
+    phone_no char(11) NOT NULL,
+     constraint mail_ph unique(email,phone_no)
+
+);
+
+create table teacher_allocation(
+    t_id VARCHAR(20),
+    sem enum('1','2','3','4','5','6','7','8') NOT NULL,
+    sub_id char(8) NOT NULL,
+    foreign key(t_id) references teachers(t_id)
+);
+
+--independent
+create table t_time_table(
+    sub_id char(8),
+    class_day ENUM('SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'),
+    class_time TIME
+);
+>>>>>>> dev
 
 -- get_attendance_date_branch_wise 
 select date_,count(distinct(attendance.usn)) from attendance,students where login_ is not null and students.branch=%s and sem=%s group by date_;
