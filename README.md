@@ -29,7 +29,6 @@ Visualization:
 * Python: 3.6 and above
 * Flask : 1.1.2
 * Werkzeug: 1.0.1
-* OS: Ubuntu 18.04 LTS
 * Face Recognition (python module)
 
 ### *Setup*
