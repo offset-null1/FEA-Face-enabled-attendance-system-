@@ -30,16 +30,11 @@ logging.basicConfig(
     filename=PATH + "-application.log",
     format="%(asctime)s.%(msecs)-3d:%(filename)s:%(funcName)s:%(levelname)s:%(lineno)d:%(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
-<<<<<<< HEAD
+
     level=logging.DEBUG
 )
 
 
-=======
-    level=logging.DEBUG,
-)
-
->>>>>>> dev
 class MysqlConnector:
     def __init__(self, **kwargs):
         """
@@ -47,14 +42,11 @@ class MysqlConnector:
         """
 
         try:
+            self.conn = mysql.connector.connect(user='root',password='dakshta',host='localhost',database='fea')
 
-<<<<<<< HEAD
-            self.conn = mysql.connector.connect(**kwargs)
-=======
             self.conn = mysql.connector.connect(
                 user="dakshta", password="dakshta", host="localhost", db="fea"
             )
->>>>>>> dev
             logging.info(f" Connecting with :{self.conn}")
             self.cursor = self.conn.cursor(buffered=True)
             logging.info(f" Cursor at :{self.cursor}")
@@ -484,17 +476,11 @@ class MysqlConnector:
                     # tickedCol = ",".join(tickedList)
                     query += ','.join([str(i) for i in colOption])
                 query += " FROM " 
-<<<<<<< HEAD
+
                 
                 if type(tableName) is list:
                     query += ','.join(str(i) for i in tableName )
                 
-=======
-                
-                if type(tableName) is list:
-                    query += ','.join(str(i) for i in tableName )
-                
->>>>>>> dev
                 elif type(tableName) is str:
                     query+= tableName 
 

@@ -11,10 +11,6 @@ import sys
 import os
 
 
-
-# from vizApp import dashApp
-
-
 fileName = sys.argv[0]
 
 cwd = os.getcwd()
@@ -95,7 +91,7 @@ def attendance():
         logging.debug(entries)
         conn.closeConnection()
     entries = get_5_last_entries()
-    # print(entries)
+    print(entries)
         #return details along
     return render_template("video_feed.html", entry=entries)
     # else:    
@@ -383,12 +379,14 @@ def form():
 
         
         np_img = decode(img_data=img_b64_list)
-       
         rgb_image = np_img[:, :, ::-1] 
-        fileName=f"./images/{branch.split(' ')[0]}/{semester}/{usn}.jpg"
-        if not os.path.exists(fileName):
-            os.makedirs(fileName)
-        cv2.imwrite(fileName,rgb_image)
+        pathName=f"./images/{branch.split(' ')[0]}/{semester}"
+        
+        if not os.path.exists(pathName):
+            os.makedirs(pathName)
+        os.chdir(pathName)
+        cv2.imwrite(f'{usn}.jpg',np_img)
+        os.chdir('../../../')
 
         conn=MysqlConnector()
         res=conn.insert(
