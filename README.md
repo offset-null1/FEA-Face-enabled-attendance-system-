@@ -5,7 +5,7 @@
 
 Face recognition database application (for students in university,schools etc) which allows the user to take *automatic attendance* without manual interference.
 
-It supports *HTML forms* to enter the data and update the database. Also facilitating *registration* of new comers along with their pic to allow automatic facial attendance. 
+It supports *HTML forms* to enter the data and update the database. Also facilitates *registration* of new comers along with their pic and details to allow automatic facial attendance. 
 
 It allows *visualization* of student scores and attendance to pinpoint the information pictorially without reading the table (though it shows the table along with the graphs).
 
