@@ -39,7 +39,12 @@ export MYSQL_USER=your_username
 export MYSQL_PASSWORD=your_password
 export MYSQL_DB=database_you_want_to_use
 ```
-**Note:** Make sure you execute FEA/backend/schema.sql for setting up the database. 
+**Run Using**:
+```bash
+python3 frontend/base.py
+```
+
+***Note:*** Make sure you execute FEA/backend/schema.sql for setting up the database. 
 
 ### *Special Thanks/Resources*:
 * [Bootstrap (creative Tim)](https://www.creative-tim.com/product/blk-design-system)
