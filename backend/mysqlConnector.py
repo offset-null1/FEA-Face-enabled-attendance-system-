@@ -6,7 +6,6 @@ from mysql.connector import errorcode
 import logging
 import sys
 import os
-import pprint
 
 
 fileName = sys.argv[0]
@@ -36,13 +35,13 @@ logging.basicConfig(
 
 
 class MysqlConnector:
-    def __init__(self, **kwargs):
+    def __init__(self):
         """
         USAGE: Accepts dict -> (user='', password='', host='', ....)
         """
 
         try:
-            self.conn = mysql.connector.connect(user='root',password='dakshta',host='localhost',database='fea')
+            self.conn = mysql.connector.connect(user=os.environ['MYSQL_USER'],password=os.environ['MYSQL_PASSWORD'],host='localhost',database=os.environ['MYSQL_DB'])
 
             self.conn = mysql.connector.connect(
                 user="dakshta", password="dakshta", host="localhost", db="fea"
